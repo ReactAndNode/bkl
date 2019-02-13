@@ -1,0 +1,395 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+html {
+  font-family: sans-serif;
+  background-color: black;
+}
+
+.dashboard {
+  display: inline-block;
+  margin-left: 1em;
+  font-size: 1.3em;
+  padding: 0.5em;
+}
+
+.mySidebar {
+  font-family: sans-serif;
+  width: 10%;
+  min-width: 18vh;
+  float: left;
+  position: fixed;
+  top: 8em;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  display: block;
+  padding: 1em;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  color: white;
+  -webkit-animation: fadein 3s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 3s; /* Firefox < 16 */
+  -ms-animation: fadein 3s; /* Internet Explorer */
+  -o-animation: fadein 3s; /* Opera < 12.1 */
+  animation: fadein 3s;
+}
+
+.FormAll {
+  font-family: sans-serif;
+  margin-left: 21%;
+  width: 40vh;
+  min-width: 80%;
+  float: left;
+  min-height: 100vh;
+  -webkit-animation: fadein 1.5s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 1.5s; /* Firefox < 16 */
+  -ms-animation: fadein 1.5s; /* Internet Explorer */
+  -o-animation: fadein 1.5s; /* Opera < 12.1 */
+  animation: fadein 1.5s;
+}
+
+.Title {
+  font-family: Brush Script MT, Brush Script Std, cursive;
+  margin-left: 30vh;
+  color: white;
+  opacity: 0.69;
+  font-size: 5em;
+  font-weight: 100;
+  min-height: 100vh;
+  -webkit-animation: fadein 5s infinite alternate; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 5s infinite alternate; /* Firefox < 16 */
+  -ms-animation: fadein 5s infinite alternate; /* Internet Explorer */
+  -o-animation: fadein 5s infinite alternate; /* Opera < 12.1 */
+  animation: fadein 5s infinite alternate;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 0.9;
+  }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 0.9;
+  }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 0.9;
+  }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 0.9;
+  }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 0.9;
+  }
+}
+
+#root__title {
+  display: block;
+  width: 100%;
+  padding: 0.2em;
+  margin-bottom: 20px;
+  font-size: 3em;
+  line-height: inherit;
+  color: #333;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.FormSides {
+  width: 100%;
+  font-family: sans-serif;
+  color: #000000;
+  display: inline-block;
+  text-transform: uppercase;
+  line-height: 2em;
+  letter-spacing: 0.09375em;
+  outline: none;
+  font-size: 1em;
+}
+
+.FormLeftSide {
+  width: 50vh;
+  min-width: 80%;
+  min-height: 100%;
+  overflow: hidden;
+  padding: 0.5em 1.875em;
+  background: #c0c0c0;
+  font-family: sans-serif;
+  color: #000000;
+  opacity: 0.9;
+  display: inline-block;
+  margin: 0.625em 0.9375em;
+  text-transform: uppercase;
+  line-height: 2em;
+  letter-spacing: 0.09375em;
+  font-size: 0.75em;
+  outline: none;
+  border: 0.1875em solid #cfcece;
+  border-radius: 0.9375em 0.9375em 0.9375em 0.9375em;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+label,
+#root_fields__title,
+#root_protections__title {
+  font-family: "Roboto", Arial, sans-serif;
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 5px;
+  font-weight: 400;
+  font-size: 1.4em;
+  line-height: inherit;
+  color: black;
+  border: 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.HeaderTitle,
+.FooterTitle {
+  width: 55vh;
+}
+
+.FormFooter {
+  font-family: "Roboto", Arial, sans-serif;
+  background: grey;
+  position: relative;
+  -webkit-text-fill-color: white;
+  display: inline-block;
+  text-transform: uppercase;
+  line-height: 3.5em;
+  letter-spacing: 0.09375em;
+  font-size: 2em;
+  padding: 0em 1em;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  bottom: 0;
+  width: 100%;
+}
+
+.textboxes {
+  font-family: "Roboto", Arial, sans-serif;
+  color: #000000;
+  cursor: pointer;
+  padding: 0em 1.875em;
+  display: inline-block;
+  margin: 0.625em 0.9375em;
+  text-transform: uppercase;
+  line-height: 2em;
+  letter-spacing: 0.09375em;
+  font-size: 0.75em;
+  outline: none;
+  border: 0.1875em solid #cfcece;
+  background-color: #ffffff;
+  border-radius: 0.9375em 0.9375em 0.9375em 0.9375em;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.fileInput {
+  font-family: "Roboto", Arial, sans-serif;
+  color: #000000;
+  cursor: pointer;
+  padding: 0em 1.875em;
+  display: inline-block;
+  margin: 0.625em 0.9375em;
+  text-transform: uppercase;
+  line-height: 2em;
+  letter-spacing: 0.09375em;
+  font-size: 0.75em;
+  outline: none;
+  align-content: center;
+  border: 0.1875em solid #cfcece;
+  background-color: #ffffff;
+  border-radius: 0.9375em 0.9375em 0.9375em 0.9375em;
+  -webkit-transition: all 0.3s;
+  -webkit-align-content: center;
+  align-items: center;
+  transition: all 0.3s;
+}
+
+.btn-info {
+  font-family: "Roboto", Arial, sans-serif;
+  color: #000000;
+  cursor: pointer;
+  padding: 0em 1.875em;
+  display: inline-block;
+  margin: 0.625em 0.9375em;
+  text-transform: uppercase;
+  line-height: 2em;
+  letter-spacing: 0.09375em;
+  font-size: 1.5em;
+  outline: none;
+  border: 0.1875em solid #cfcece;
+  background-color: #ffffff;
+  border-radius: 0.9375em 0.9375em 0.9375em 0.9375em;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+* {
+  font-family: "Open Sans", sans-serif;
+  font-weight: lighter;
+}
+
+.content {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1200px;
+  min-height: 100%;
+  height: 900px;
+  background-color: #ececeb;
+  padding: 100px;
+  border: 5px hidden;
+  border-radius: 15px;
+  margin-bottom: 50px;
+}
+
+.about {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ececeb;
+  text-align: center;
+  margin: 15px;
+}
+
+.faq {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  margin: 15px;
+}
+
+.question {
+  font-weight: bold;
+}
+
+.overAll {
+  background-color: black;
+  display: flex;
+}
+
+.MainHeader {
+  position: fixed;
+  width: 100%;
+  height: 2em;
+  font-family: "Roboto", Arial, sans-serif;
+  background: lightblack;
+  -webkit-text-fill-color: white;
+  display: inline-block;
+  text-transform: uppercase;
+  line-height: 1em;
+  letter-spacing: 0.09375em;
+  font-size: 2.5em;
+  padding: 0.5em 1.2em;
+  transition: all 0.3s;
+}
+
+.MainBody {
+  background: url("https://get.pxhere.com/photo/horizon-architecture-skyline-night-building-dawn-city-skyscraper-urban-new-york-manhattan-cityscape-panorama-downtown-dusk-evening-nyc-usa-america-landmark-brooklyn-darkness-metropolitan-metropolis-new-york-skyline-city-skyline-new-york-city-skyline-manhattan-skyline-nyc-skyline-empire-state-building-night-human-settlement-atmosphere-of-earth-metropolitan-area-627492.jpg")
+    no-repeat center 10em fixed;
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%); /* New WebKit */
+  -webkit-background-size: cover;
+  o-filter: url("https://get.pxhere.com/photo/horizon-architecture-skyline-night-building-dawn-city-skyscraper-urban-new-york-manhattan-cityscape-panorama-downtown-dusk-evening-nyc-usa-america-landmark-brooklyn-darkness-metropolitan-metropolis-new-york-skyline-city-skyline-new-york-city-skyline-manhattan-skyline-nyc-skyline-empire-state-building-night-human-settlement-atmosphere-of-earth-metropolitan-area-627492.jpg")
+    no-repeat center 10em fixed;
+  -moz-background-size: cover;
+  -ms-filter: gray();
+  -o-background-size: cover;
+  background-size: cover;
+  min-width: 100vh;
+  height: 100%;
+  width: 100%;
+}
+
+.LogoHeader {
+}
+
+a {
+  font-family: sans-serif;
+  font-weight: lighter;
+  opacity: 0.86;
+  color: white;
+}
+
+.footerBar {
+  width: 6%;
+  min-width: 10vh;
+  float: left;
+  position: fixed;
+  bottom: 5em;
+}
+
+.Nav__container {
+  display: none;
+}
+
+.Nav__item-wrapper {
+  list-style-type: none;
+  padding: 0px;
+}
+
+body {
+  min-height: 100%;
+}
+
+h1 {
+  text-align: center;
+  width: 900px;
+  margin-top: -25px;
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ececeb;
+  font-size: 40px;
+}
+
+/*h3, p {*/
+/*background-color: #ececeb;*/
+/*}*/
+
+/*h3 {*/
+/*font-size: 2em;*/
+/*}*/
+
+/*p {*/
+/*font-size: 17px;*/
+/*}*/
+/* homepage */
