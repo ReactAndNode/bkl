@@ -18,8 +18,8 @@ const Nav = () => (
     </section>
 
     <section className="blurb">
-      <h2>About</h2>
-      <p>Hi, I&apos;m Bowen. This is my site </p>
+      <h2>Who am I?</h2>
+      <p>Hi, I&apos;m Bowen. I graduated from the University of Maryland, College Park 2018. I am currently a software engineer at Google</p>
       <ul className="actions">
         <li>
           {window.location.pathname !== `${BASE_PATH}/resume` ? <Link to="/resume" className="button">Learn More</Link> : <Link to="/about" className="button">About Me</Link>}

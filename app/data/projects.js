@@ -1,12 +1,28 @@
-
 const data = [
-  {
-    desc: 'HI'
-      + 'Built for a social impact hackathon. '
-      + 'NearestDollar connected to your bank accounts, credit cards, '
-      + 'or debit cards and rounded up your purchases to donate the balance to '
-      + 'the charity of your choice.',
-  },
+    {
+        title: 'Reveney',
+        subtitle: '2015 BVP Hackathon',
+        link: '/projects/nearestdollar/',
+        image: '/images/projects/nearestdollar.jpg',
+        date: '2015-11-20',
+        desc: '... '
+    },
+    {
+        title: 'Social Blog',
+        subtitle: '2015 BVP Hackathon',
+        link: '/projects/nearestdollar/',
+        image: '/images/projects/nearestdollar.jpg',
+        date: '2015-11-20',
+        desc: '... '
+    },
+    {
+        title: 'Cash Cash',
+        subtitle: '2015 BVP Hackathon',
+        link: '/projects/nearestdollar/',
+        image: '/images/projects/nearestdollar.jpg',
+        date: '2015-11-20',
+        desc: '... '
+    },
 ];
 
-export default data;
+export default data

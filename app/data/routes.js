@@ -1,3 +1,5 @@
+// this is where you change you nav bar to have more pages
+// I removed the stats page here
 const data = [
   {
     path: '/',
@@ -15,10 +17,6 @@ const data = [
   {
     path: '/projects',
     label: 'Projects',
-  },
-  {
-    path: '/stats',
-    label: 'Stats',
   },
   {
     path: '/contact',
