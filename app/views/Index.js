@@ -1,25 +1,38 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import Helmet from 'react-helmet';
+import ReactMarkdown from 'react-markdown';
+
 
 import Main from '../layouts/Main';
+import markdown from '../data/about.md';
+
+const count = markdown.split(/\s+/)
+    .map(s => s.replace(/\W/g, ''))
+    .filter(s => s.length).length;
+
+// Make all hrefs react router links
+const LinkRenderer = ({...children}) => <Link {...children} />;
 
 const Index = () => (
-  <Main>
-    <article className="post" id="index">
-      <header>
-        <div className="title">
-          <h2><Link to="/">About this site</Link></h2>
-          <p>Welcome to the site please enjoy your time here</p>
-        </div>
-      </header>
-      <p> Please feel free to read more <Link to="/about">about me</Link>,
-        or you can check out my {' '}
-        <Link to="/resume">resume</Link>, {' '}
-        <Link to="/projects">projects</Link>, {' '}
-        or <Link to="/contact">contact</Link> me.
-      </p>
-    </article>
-  </Main>
+    <Main>
+        <Helmet title="About"/>
+        <article className="post" id="about">
+            <header>
+                <div className="title">
+                    <h2><Link to="/about">About Me</Link></h2>
+                    <p>(in about {count} words)</p>
+                </div>
+            </header>
+            <ReactMarkdown
+                source={markdown}
+                renderers={{
+                    Link: LinkRenderer,
+                }}
+                escapeHtml={false}
+            />
+        </article>
+    </Main>
 );
 
 export default Index;

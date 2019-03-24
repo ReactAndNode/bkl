@@ -8,7 +8,7 @@ const data = [
   },
   {
     path: '/about',
-    label: 'About',
+    label: 'Picture',
   },
   {
     path: '/resume',

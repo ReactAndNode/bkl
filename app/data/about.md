@@ -1,26 +1,32 @@
 
-#### Intro
-I am 
-<br>
-I am 
+#### A little about myself 
+I am an incoming software engineer at Google. Recently graduated from the University of Maryland, College Park. This is my personal site and if you have any questions don't hesitant to email me :)
 <br><br>
-#### Currently
-I have 
-<br><br>
+
 #### History
+- I lived in Japan for almost 5 years between 
+1999 - 2004
+- Moved to America 2008 and traveled back and forth 
+<br>
 
-- Hi
-
-<br><br>
 #### Hobbies
 - Poker
-- [Books](https://www.goodreads.com/mdangelo)
-- [Photography](https://instagram.com/dangelosaurus)
+- Hearthstone 
+- Lifting
+ <br>
 
-#### Travel / Geography
-
+#### Where have I been? 
 - China
+- Japan 
+- Canada 
+- U.S.A. 
+- The Bahamas
+- More to come! I plan to visit Australia, Norway, and Thailand 
+<br> 
 
-#### Dream
-- Inspiration.
+#### Dream and Goal
+- Creating the most efficent way for people to live 
+- Inspire people around me 
+- Make a different in this world 
+- Is just a simulation, let's get all the power ups - my quote 
 
