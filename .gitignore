@@ -43,3 +43,9 @@ tmp/
 
 # Nohup
 nohup.out
+
+# Next.js
+.next/
+out/
+.env.*
+!.env.example

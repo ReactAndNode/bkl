@@ -6,3 +6,25 @@
     margin: auto;
   }
 }
+
+.photo-gallery {
+  columns: 1;
+  column-gap: 8px;
+  container-type: inline-size;
+}
+
+.photo-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 8px;
+  break-inside: avoid;
+}
+
+@media (min-width: 736px) {
+  .photo-gallery { columns: 2; }
+}
+
+@media (min-width: 1680px) {
+  .photo-gallery { columns: 3; }
+}

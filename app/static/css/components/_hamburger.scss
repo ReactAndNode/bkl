@@ -38,3 +38,39 @@
     border-top: none;
   }
 }
+
+#header .menu-toggle {
+  height: 100%;
+  padding: 0 1.5em;
+  box-shadow: none;
+  font-size: 1em;
+}
+
+.mobile-menu {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(22em, 85vw);
+  max-width: 100%;
+  height: 100dvh;
+  max-height: 100%;
+  margin: 0;
+  padding: 2em;
+  border: 0;
+  border-left: 1px solid _palette(border);
+  background: _palette(bg);
+  color: _palette(fg-bold);
+  overflow-y: auto;
+}
+
+.mobile-menu::backdrop {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.menu-close {
+  width: 100%;
+}
+
+button:focus-visible, a:focus-visible {
+  outline: 2px solid _palette(accent);
+  outline-offset: 4px;
+}

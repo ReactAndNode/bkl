@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 const Job = ({ data }) => (
   <article className="jobs-container">
@@ -15,14 +14,5 @@ const Job = ({ data }) => (
   </article>
 );
 
-Job.propTypes = {
-  data: PropTypes.shape({
-    link: PropTypes.string.isRequired,
-    company: PropTypes.string.isRequired,
-    position: PropTypes.string.isRequired,
-    daterange: PropTypes.string.isRequired,
-    points: PropTypes.arrayOf(PropTypes.string).isRequired,
-  }).isRequired,
-};
 
 export default Job;

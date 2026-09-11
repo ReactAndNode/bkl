@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-const SkillBar = ({ data, categories }) => {
+const SkillBar = ({ data, categories = [] }) => {
   const { category, compentency, title } = data;
 
   // TODO: Consider averaging colors
@@ -25,20 +24,6 @@ const SkillBar = ({ data, categories }) => {
   );
 };
 
-SkillBar.propTypes = {
-  data: PropTypes.shape({
-    category: PropTypes.arrayOf(PropTypes.string).isRequired,
-    compentency: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
-  }).isRequired,
-  categories: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string,
-    color: PropTypes.string,
-  })),
-};
 
-SkillBar.defaultProps = {
-  categories: [],
-};
 
 export default SkillBar;

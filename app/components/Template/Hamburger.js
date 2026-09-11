@@ -1,41 +1,35 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+'use client';
 
-import Menu from 'react-burger-menu/lib/menus/slide';
-
+import { useRef } from 'react';
+import Link from 'next/link';
 import routes from '../../data/routes';
 
-const Hamburger = () => {
-  const [open, setOpen] = useState(false);
+export default function Hamburger() {
+  const dialog = useRef(null);
+  const close = () => dialog.current.close();
 
   return (
     <div className="hamburger-container">
-      <nav className="main" id="hambuger-nav">
-        <ul>
-          {open ? (
-            <li className="menu close-menu">
-              <div onClick={() => setOpen(!open)} className="menu-hover">&#10005;</div>
-            </li>
-          ) : (
-            <li className="menu open-menu">
-              <div onClick={() => setOpen(!open)} className="menu-hover">&#9776;</div>
-            </li>
-          )}
-        </ul>
-      </nav>
-      <Menu right isOpen={open}>
-        <ul className="hamburger-ul">
-          {routes.map(l => (
-            <li key={l.label}>
-              <Link to={l.path} onClick={() => setOpen(!open)}>
-                <h3 className={l.index && 'index-li'}>{l.label}</h3>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </Menu>
+      <button className="menu-toggle" type="button" aria-label="Open navigation"
+        aria-haspopup="dialog" aria-controls="mobile-navigation"
+        onClick={() => dialog.current.showModal()}>
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <dialog ref={dialog} id="mobile-navigation" className="mobile-menu" aria-label="Navigation"
+        onClick={event => { if (event.target === event.currentTarget) close(); }}>
+        <button type="button" className="menu-close" onClick={close} autoFocus>Close menu</button>
+        <nav aria-label="Mobile navigation">
+          <ul className="hamburger-ul">
+            {routes.map(route => (
+              <li key={route.path}>
+                <Link href={route.path} onClick={close}>
+                  <h3 className={route.index ? 'index-li' : undefined}>{route.label}</h3>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </dialog>
     </div>
   );
-};
-
-export default Hamburger;
+}

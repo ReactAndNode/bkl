@@ -1,16 +1,16 @@
+'use client';
+
 import React, {useState, useEffect, useRef} from 'react';
-import {Link} from 'react-router-dom';
-import Helmet from 'react-helmet';
+import Link from 'next/link';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
-import Main from '../layouts/Main';
 
-import data from '../data/contact';
+
+import data from '../../data/contact';
 
 // Validates the first half of an email address.
 const validateText = (text) => {
     // NOTE: Passes RFC 5322 but not tested on google's standard.
-    // eslint-disable-next-line no-useless-escape
     const re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))$/;
     return re.test(text) || text.length === 0;
 };
@@ -56,7 +56,7 @@ const useInterval = (callback, delay) => {
     }, [delay]);
 };
 
-const Contact = () => {
+const ContactContent = () => {
     const hold = 50; // ticks to wait after message is complete before rendering next message
     const delay = 50; // tick length in mS
 
@@ -82,12 +82,11 @@ const Contact = () => {
     }, isActive ? delay : null);
 
     return (
-        <Main>
-            <Helmet title="Contact" />
+        <>
             <article className="post" id="contact">
                 <header>
                     <div className="title">
-                        <h2><Link to="/contact">Contact</Link></h2>
+                        <h2><Link href="/contact">Contact</Link></h2>
                     </div>
                 </header>
                 <div className="email-at">
@@ -106,12 +105,12 @@ const Contact = () => {
                 </div>
                 <ul className="icons">
                     {data.map(s => (
-                        <li key={s.label}><a href={s.link}><FontAwesomeIcon icon={s.icon} /></a></li>
+                        <li key={s.label}><a href={s.link} aria-label={s.label}><FontAwesomeIcon icon={s.icon} /></a></li>
                     ))}
                 </ul>
             </article>
-        </Main>
+        </>
     );
 };
 
-export default Contact;
+export default ContactContent;

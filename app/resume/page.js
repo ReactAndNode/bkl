@@ -1,6 +1,7 @@
+export const metadata = { title: 'Resume', alternates: { canonical: '/resume/' } };
+
 import React from 'react';
-import { Link } from 'react-router-dom';
-import Helmet from 'react-helmet';
+import Link from 'next/link';
 
 import Main from '../layouts/Main';
 
@@ -25,11 +26,10 @@ const sections = [
 
 const Resume = () => (
   <Main>
-    <Helmet title="Resume" />
     <article className="post" id="resume">
       <header>
         <div className="title">
-          <h2><Link to="resume">Resume</Link></h2>
+          <h2><Link href="/resume">Resume</Link></h2>
           <div className="link-container">
             {sections.map(sec => (
               <h4 key={sec}>
