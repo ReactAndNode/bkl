@@ -19,6 +19,10 @@ const data = [
     label: 'Projects',
   },
   {
+    path: '/math',
+    label: 'Math',
+  },
+  {
     path: '/contact',
     label: 'Contact',
   },

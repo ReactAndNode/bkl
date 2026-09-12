@@ -52,3 +52,15 @@ The gallery retains the original external Unsplash URLs; their availability is c
 The existing Sass theme still compiles but emits deprecation warnings for its legacy syntax. The scripts use Next.js's supported Webpack compiler. ESLint 9 is pinned for compatibility with Next.js's current lint plugins.
 
 This is a public static site. Hiding a navigation link does not make content private. Authentication and content changes are outside this code migration.
+
+## Sumday math practice
+
+The **Math** navigation link opens `/math/`, a self-contained practice page with its own scoped styles and bundled fonts:
+
+- **Mental math:** One-minute rounds of addition, subtraction, multiplication, and whole-number division. Three difficulty levels, four answer choices, one point per correct answer, and keys 1–4 for quick answers.
+- **Everyday stats:** Twelve lessons across a four-week study path, with examples, three-question quizzes, explanations, daily exercises, mastery, and XP.
+- **Quick tip:** One-minute games at 15%, 18%, 20%, 22%, and 25%, with three levels of bill difficulty. Tip amounts round to the nearest cent.
+
+Scores, streaks, and study progress stay in the visitor's browser. Completed rounds count toward a three-session daily goal. Math and tip questions are generated randomly; statistics quizzes use fixed questions with shuffled answers. Progress on a local origin does not transfer automatically to bowenkliu.com.
+
+The implementation is under `app/math/`. Tests in `test/math-*.test.ts*` cover scoring, timer expiry, keyboard input, tip rounding, mastery, and restored progress; `test/export.test.mjs` checks the exported route. Run `yarn typecheck` for TypeScript checks alongside the existing lint, build, and test commands. The integrated site continues using port 7999; the standalone Sumday project remains on port 3006.

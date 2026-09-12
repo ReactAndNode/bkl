@@ -49,3 +49,6 @@ nohup.out
 out/
 .env.*
 !.env.example
+
+# TypeScript incremental build cache
+*.tsbuildinfo

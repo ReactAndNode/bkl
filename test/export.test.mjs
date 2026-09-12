@@ -10,6 +10,7 @@ const pages = [
   ['/about/', 'Picture | Bowen K Liu', 'Not the best photographer'],
   ['/resume/', 'Resume | Bowen K Liu', 'University of Maryland'],
   ['/projects/', 'Projects | Bowen K Liu', 'Reveney'],
+  ['/math/', 'Sumday — A little math, every day', 'Sharper thinking'],
   ['/contact/', 'Contact | Bowen K Liu', 'Feel free to get in touch'],
 ];
 
