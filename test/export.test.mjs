@@ -31,6 +31,13 @@ for (const [route, title, content] of pages) {
     assert.ok(html.includes(`<title>${title}</title>`));
     assert.ok(html.includes(content));
     assert.ok(html.includes(`https://bowenkliu.com${route}`));
+    if (route === '/math/') {
+      for (const mode of ['math', 'stats', 'tips', 'poker', 'stocks']) {
+        assert.ok(html.includes(`id="tab-${mode}"`), `Missing ${mode} practice tab`);
+      }
+      assert.ok(html.includes('Poker Lab'));
+      assert.ok(html.includes('Stock Lab'));
+    }
     for (const [link] of pages) {
       assert.match(html, new RegExp(`href="${link === '/' ? '/' : link.slice(0, -1) + '/?'}"`));
     }

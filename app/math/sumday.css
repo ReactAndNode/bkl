@@ -17,3 +17,172 @@
 @media(max-width:800px){#sumday .app-shell{padding:0 24px}#sumday .site-header{height:83px}#sumday .header-tagline{display:none}#sumday .welcome{min-height:250px;padding:30px 0}#sumday .welcome h1{font-size:40px}#sumday .hero-art{transform:scale(.8);transform-origin:right center;width:225px;margin-right:0}#sumday .workspace{grid-template-columns:1fr}#sumday .side-column{display:grid;grid-template-columns:1fr 1fr;gap:16px}#sumday .note-card{grid-column:1/-1;padding:5px 10px 10px}#sumday .numbers-card{padding-top:21px}#sumday .numbers-card>.section-kicker{margin-bottom:8px}#sumday .stat-row{padding:5px 0}#sumday .empty-stats{margin-top:11px}#sumday .operation{font-size:11px;gap:7px}#sumday .session-note{font-size:9px}#sumday .bottom-note{margin-bottom:25px}}
 @media(max-width:540px){#sumday .app-shell{padding:0 18px}#sumday .site-header{height:76px}#sumday .brand{font-size:27px}#sumday .header-right{gap:12px}#sumday .streak-pill{font-size:10px;padding:7px 9px}#sumday .avatar{width:30px;height:30px;font-size:8px}#sumday .welcome{min-height:225px;padding:30px 2px}#sumday .welcome h1{font-size:36px;letter-spacing:-1.5px}#sumday .welcome p{font-size:11px;max-width:240px;line-height:1.7}#sumday .eyebrow{font-size:8px;letter-spacing:1.1px}#sumday .little-star{font-size:17px}#sumday .hero-art{display:none}#sumday .mode-tabs{gap:3px;margin-bottom:18px;padding-bottom:11px}#sumday .mode-tab{flex:1;justify-content:center;font-size:10px;gap:6px;padding:12px 5px;white-space:nowrap}#sumday .mode-tab svg{width:15px}#sumday .mode-tab>span{display:none}#sumday .practice-card{padding:23px 18px 20px;border-radius:12px}#sumday .practice-card h2{font-size:22px;max-width:260px}#sumday .card-description{font-size:11px;margin-bottom:25px}#sumday .operation-grid{grid-template-columns:1fr 1fr}#sumday .operation{padding:11px;font-size:11px;justify-content:flex-start;gap:10px}#sumday .operation svg{margin-left:auto;width:13px}#sumday .level-card{padding:13px 10px}#sumday .level-card>span:not(.level-top){font-size:9px}#sumday .level-card small{font-size:8px}#sumday .field-heading h3{font-size:11px}#sumday .field-heading>span{font-size:9px}#sumday .level-grid{gap:7px}#sumday .session-note{flex-wrap:wrap;font-size:8px;gap:4px}#sumday .side-column{grid-template-columns:1fr}#sumday .note-card{padding:8px 10px}#sumday .daily-card{padding:22px}#sumday .numbers-card{padding:23px 22px 0}#sumday .numbers-card>.section-kicker{margin-bottom:13px}#sumday .stat-row{padding:9px 0}#sumday .bottom-note{gap:14px;flex-direction:column;margin:21px 3px 25px;font-size:9px}#sumday footer{font-size:8px;padding:20px 2px}#sumday .soft-tag{font-size:8px}}
 @media(max-width:540px){#sumday .game-label{font-size:9px;gap:5px;letter-spacing:.3px}#sumday .game-label>span{font-size:7px;padding:4px 5px;margin-left:1px}#sumday .end-round{font-size:9px;gap:4px}#sumday .practice-card .math-question{font-size:43px;letter-spacing:-2px;max-width:none}#sumday .question-area{padding:32px 0 25px}#sumday .game-status{margin-top:26px}#sumday .answer-button{height:68px;font-size:23px}#sumday .answer-button kbd{left:9px;top:10px;font-size:8px}#sumday .answer-feedback{font-size:10px;margin-top:15px;min-height:37px}#sumday .game-bottom{font-size:8px;gap:8px;flex-wrap:wrap;justify-content:center;line-height:1.8}#sumday .game-card{min-height:520px}#sumday .percentage-grid{gap:5px}#sumday .percentage-option{font-size:13px;gap:4px}#sumday .percentage-option svg{width:10px}#sumday .tip-example{gap:9px;padding:13px 10px}#sumday .tip-example p{font-size:11px}#sumday .tip-example p span{margin:0 3px}#sumday .tip-example>svg{width:14px}#sumday .range-note{font-size:9px}#sumday .lesson-topline{align-items:flex-start}#sumday .lesson-topline .soft-tag{max-width:155px;font-size:7px;line-height:1.7}#sumday .lesson-topline .text-button{white-space:nowrap;font-size:10px}#sumday .lesson-detail h2{max-width:none}#sumday .lesson-concept{font-size:12px}#sumday .lesson-rules p{font-size:11px}#sumday .worked-example{padding:17px}#sumday .worked-example p{font-size:12px}#sumday .practice-card .quiz-question{font-size:21px;max-width:none}#sumday .quiz-choice{font-size:11px;gap:10px;padding:13px 11px}#sumday .explanation-box{padding:16px}#sumday .explanation-box p{font-size:11px}#sumday .study-schedule{font-size:9px}#sumday .chapter-heading{gap:8px}#sumday .chapter-heading h3{font-size:11px}#sumday .chapter-heading p{font-size:9px}#sumday .week-label{font-size:7px;padding:6px}#sumday .lesson-row{gap:9px;padding:14px 10px}#sumday .lesson-info strong{font-size:10px;line-height:1.5}#sumday .lesson-info>span{font-size:8px}#sumday .lesson-time{display:none}#sumday .lesson-row>svg{margin-left:auto}#sumday .lesson-row .lesson-score+svg{margin-left:0}#sumday .lesson-score{font-size:8px}#sumday .lesson-number{width:25px;height:25px;font-size:8px}#sumday .path-footnote{align-items:flex-start;font-size:9px}#sumday .review-list>div>div{flex-direction:column;align-items:flex-start;gap:5px}#sumday .review-list strong{font-size:12px}#sumday .result-metrics span{font-size:9px}#sumday .perfect-note{font-size:10px;text-align:center;line-height:1.7}#sumday .recent-card>div>span>small{max-width:220px}#sumday .study-card .card-heading{gap:8px}#sumday .study-card .soft-tag{font-size:7px}}
+
+#sumday .mode-tabs { flex-wrap: wrap; }
+#sumday .mode-tab { flex: 1 1 120px; justify-content: center; white-space: nowrap; }
+#sumday .mode-tab > span { margin-left: 8px; }
+#sumday .poker-theme { --lab-ink: #536f65; --lab-light: #eff4ee; --lab-border: #c7d9cb; --lab-accent: #6e9680; }
+#sumday .stocks-theme { --lab-ink: #8b7553; --lab-light: #f7f3e9; --lab-border: #dfd2b6; --lab-accent: #ad9569; }
+#sumday .lab-hub .icon-badge, #sumday .lab-result .icon-badge { background: var(--lab-light); border-color: var(--lab-border); color: var(--lab-ink) !important; }
+#sumday .lab-hub h2 { max-width: 530px; }
+#sumday .lab-hub .card-description { margin-bottom: 22px; }
+#sumday .lab-intro-art { display: flex; align-items: center; position: relative; gap: 12px; min-height: 124px; padding: 22px 24px; border-radius: 12px; margin-bottom: 28px; overflow: hidden; }
+#sumday .felt-art { background: #edf2e9; border: 1px solid #e0e8d9; }
+#sumday .market-art { background: #f5f0e5; border: 1px solid #ece3d3; }
+#sumday .mini-card { display: flex; flex-direction: column; width: 47px; height: 66px; background: #fffefa; border: 1px solid #e1e4d9; border-radius: 7px; font: 600 19px var(--heading); padding: 5px 8px; box-shadow: 0 3px 7px #536f650a; color: #526757 !important; }
+#sumday .mini-card > span { line-height: 1; font-size: 25px; }
+#sumday .mini-card.tilted-left { transform: rotate(-13deg); }
+#sumday .mini-card.tilted-right { transform: rotate(10deg); margin-left: -20px; margin-right: 15px; }
+#sumday .red-card { color: #b37762 !important; }
+#sumday .art-caption { display: flex; flex-direction: column; gap: 9px; }
+#sumday .art-caption strong { font: 600 17px var(--heading); letter-spacing: -.4px; color: var(--lab-ink) !important; }
+#sumday .art-caption > span { font-size: 10px; color: #98a18a !important; }
+#sumday .chip-stack { display: grid; place-items: center; margin-left: auto; width: 41px; height: 41px; background: #e2e9d7; color: #82986c !important; border: 2px dashed #bdcdaa; border-radius: 50%; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+#sumday .market-bars { display: flex; height: 78px; align-items: flex-end; gap: 4px; margin-right: 13px; transform: rotate(-5deg); }
+#sumday .market-bars i { width: 9px; background: #d4c49c; border-radius: 3px 3px 0 0; }
+#sumday .market-bars i:nth-child(2n) { background: #b9b995; }
+#sumday .mix-button { display: flex; align-items: center; gap: 5px; background: transparent; border: 1px solid var(--line); border-radius: 20px; padding: 6px 10px; color: #8e9782 !important; font-size: 10px; }
+#sumday .mix-button.selected { background: var(--lab-light); color: var(--lab-ink) !important; border-color: var(--lab-border); }
+#sumday .lab-game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#sumday .lab-game-option { display: flex; flex-direction: column; padding: 15px 16px; gap: 8px; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 9px; }
+#sumday .lab-game-option:hover { background: var(--lab-light); }
+#sumday .lab-game-option.selected { background: var(--lab-light); border-color: var(--lab-accent); }
+#sumday .lab-game-top { display: flex; justify-content: space-between; align-items: center; width: 100%; color: #b1bba6 !important; font-size: 9px; margin-bottom: 4px; }
+#sumday .lab-game-option.selected .lab-game-top { color: var(--lab-accent) !important; }
+#sumday .lab-game-option > strong { font: 600 13px var(--heading); letter-spacing: -.2px; }
+#sumday .lab-game-option > span:last-child { font-size: 10px; color: #949e88 !important; line-height: 1.7; }
+#sumday .lab-format-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#sumday .lab-format { display: flex; align-items: center; gap: 11px; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 15px 12px; color: #8f9c7e !important; }
+#sumday .lab-format.selected { background: var(--lab-light); border-color: var(--lab-border); color: var(--lab-ink) !important; }
+#sumday .lab-format > span:not(.radio-dot) { display: flex; flex-direction: column; gap: 6px; }
+#sumday .lab-format strong { font-size: 12px; font-weight: 550; }
+#sumday .lab-format small { font-size: 9px; color: #9aab8a !important; }
+#sumday .lab-format .radio-dot { margin-left: auto; flex-shrink: 0; }
+#sumday .lab-format > svg { flex-shrink: 0; }
+#sumday .lab-brief { display: flex; align-items: flex-start; gap: 10px; margin: 21px 2px 0; color: var(--lab-accent) !important; }
+#sumday .lab-brief > svg { flex-shrink: 0; margin-top: 2px; }
+#sumday .lab-brief p { color: #8d9980 !important; font-size: 11px; line-height: 1.8; margin: 0; }
+#sumday .lab-round-count { color: #98a18d !important; text-align: center; font-size: 10px; margin: 18px 0 0; }
+#sumday .lab-source { display: flex; justify-content: center; align-items: center; gap: 4px; color: var(--lab-ink) !important; font-size: 10px; margin-top: 18px; text-decoration: underline; text-underline-offset: 3px; }
+#sumday .lab-status { display: flex; justify-content: space-between; align-items: center; margin-top: 26px; }
+#sumday .lab-step-label { font-size: 10px; letter-spacing: 1.4px; color: var(--lab-ink) !important; }
+#sumday .lab-round .quiz-progress { margin: 14px 0 28px; }
+#sumday .lab-round .quiz-progress > .done { background: var(--lab-accent); }
+#sumday .lab-round .quiz-progress > .current { background: var(--lab-border); }
+#sumday .lab-round .timer-track { margin-top: 12px; }
+#sumday .lab-question-heading { margin: 27px 0 20px; }
+#sumday .lab-question-heading .question-number { font-size: 9px; letter-spacing: 1.4px; color: var(--lab-accent) !important; }
+#sumday .practice-card .lab-question-heading h2 { font-size: 23px; line-height: 1.5; letter-spacing: -.6px; margin: 11px 0 0; max-width: none; }
+#sumday .lab-facts { display: flex; background: var(--lab-light); border: 1px solid var(--lab-border); border-radius: 9px; padding: 20px 10px; gap: 8px; }
+#sumday .lab-facts > div { display: flex; flex: 1; flex-direction: column; align-items: center; text-align: center; justify-content: center; gap: 10px; }
+#sumday .lab-facts > div + div { border-left: 1px solid var(--lab-border); }
+#sumday .lab-facts > div > span { font-size: 8px; letter-spacing: .7px; line-height: 1.7; color: #8b9b7b !important; max-width: 130px; padding: 0 3px; }
+#sumday .lab-facts strong { font: 600 23px var(--heading); letter-spacing: -.8px; color: var(--lab-ink) !important; }
+#sumday .lab-rules { font-size: 10px; line-height: 1.8; color: #99a28c !important; margin: 12px 2px 15px; }
+#sumday .lab-hint-button { font-size: 10px; margin: 0 0 15px; color: var(--lab-accent) !important; }
+#sumday .lab-hint { font-size: 11px; line-height: 1.9; color: #85946e !important; background: #f5f7ef; border-left: 2px solid #ccd9b8; padding: 12px 15px; margin: 0 0 18px; border-radius: 0 5px 5px 0; }
+#sumday .lab-choices .quiz-choice { font-size: 12px; line-height: 1.7; min-height: 56px; }
+#sumday .lab-choices kbd { font-family: var(--sans); }
+#sumday .lab-choices .quiz-choice:hover:not(:disabled) { border-color: var(--lab-accent); background: var(--lab-light); }
+#sumday .lab-takeaway { font-size: 11px; line-height: 1.85; padding-top: 9px; border-top: 1px solid #b7c99844; }
+#sumday .lab-simulation { display: flex; align-items: flex-start; gap: 8px; margin: 15px 0 0; padding: 12px 14px; border: 1px dashed var(--lab-border); background: var(--lab-light); border-radius: 8px; font-size: 10px; line-height: 1.8; color: var(--lab-ink) !important; }
+#sumday .lab-simulation > svg { flex-shrink: 0; margin-top: 3px; }
+#sumday .lab-simulation p { margin: 0; }
+#sumday .lab-keyboard-note { text-align: center; font-size: 9px; line-height: 1.8; color: #9ba68e !important; margin: 18px 0 0; }
+#sumday .poker-table { display: flex; justify-content: center; gap: 28px; background: #eaf0e8; border: 1px solid #dce7da; border-radius: 10px; padding: 22px 14px; margin-top: 14px; }
+#sumday .card-group { display: flex; flex-direction: column; gap: 13px; align-items: center; }
+#sumday .card-group > span { color: #8ba184 !important; font-size: 8px; letter-spacing: 1.3px; }
+#sumday .card-group > div { display: flex; gap: 7px; }
+#sumday .playing-card { display: flex; flex-direction: column; justify-content: space-between; width: 43px; height: 63px; background: #fffefa; color: #546c60 !important; border: 1px solid #dce4d7; border-radius: 6px; padding: 7px 8px; box-shadow: 0 2px 1px #4d755b09; }
+#sumday .playing-card b { font: 600 16px/1 var(--heading); }
+#sumday .playing-card > span { font-size: 23px; line-height: 1; text-align: right; }
+#sumday .playing-card.red-card { color: #b57b65 !important; }
+#sumday .interval-panel { padding: 19px 17px 13px; background: #f8f9f4; border: 1px solid #e9ede0; border-radius: 9px; margin-top: 13px; }
+#sumday .interval-panel > div:first-child { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+#sumday .interval-panel > div:first-child > span { font-size: 8px; color: #96a287 !important; letter-spacing: .8px; }
+#sumday .interval-panel strong { font: 550 12px var(--heading); color: #7a9062 !important; }
+#sumday .confidence-track { position: relative; background: #e6ebdc; height: 7px; border-radius: 5px; margin: 24px 0 11px; }
+#sumday .confidence-range { display: block; position: absolute; height: 7px; background: #b5c99a; border-radius: 5px; }
+#sumday .confidence-baseline { position: absolute; height: 23px; width: 1px; background: #9f9985; left: 50%; top: -8px; z-index: 1; }
+#sumday .confidence-estimate { display: block; position: absolute; height: 11px; width: 11px; background: #819b64; border: 2px solid #f8f9f4; border-radius: 50%; transform: translateX(-50%); top: -2px; z-index: 2; }
+#sumday .confidence-labels { display: flex; justify-content: space-between; font-size: 8px; color: #a0aa91 !important; padding-top: 1px; }
+#sumday .basket-table-wrap { overflow-x: auto; border: 1px solid #e9e6d9; border-radius: 8px; margin-top: 14px; }
+#sumday .basket-table { border-collapse: collapse; width: 100%; margin: 0; text-align: center; }
+#sumday .basket-table caption { text-align: left; padding: 14px; font-size: 9px; color: #a4987e !important; background: #faf8f1; }
+#sumday .basket-table th, #sumday .basket-table td { font-size: 11px; padding: 12px 10px; border-bottom: 1px solid #eeeade; }
+#sumday .basket-table thead th { color: #a59b84 !important; background: #faf8f1; font-size: 9px; font-weight: 500; }
+#sumday .basket-table tbody th { color: #827e64 !important; text-align: left; padding-left: 14px; font-weight: 500; }
+#sumday .basket-table tbody tr:nth-child(2n) { background: #fafbf6; }
+#sumday .basket-table tr:last-child td, #sumday .basket-table tr:last-child th { border-bottom: 0; }
+#sumday .positive-return { color: #7b9463 !important; }
+#sumday .negative-return { color: #b78d6a !important; }
+#sumday .lab-review { margin-top: 23px; }
+#sumday .lab-review > summary { cursor: pointer; color: var(--lab-ink) !important; font-size: 12px; padding: 7px 0; }
+#sumday .lab-review > summary:focus-visible { outline: 2px solid var(--lab-accent); outline-offset: 4px; }
+#sumday .lab-review-item { padding: 22px 0; border-bottom: 1px solid var(--line); }
+#sumday .lab-review-heading { display: flex; align-items: center; gap: 7px; color: var(--lab-ink) !important; }
+#sumday .lab-review-heading strong { font-size: 12px; font-weight: 550; }
+#sumday .lab-review-item > p { font-size: 11px; line-height: 1.9; color: #8c9780 !important; margin: 11px 0; }
+#sumday .lab-review-item b { font-weight: 600; }
+#sumday .lab-evidence.compact .lab-facts { padding: 12px 8px; margin: 13px 0; }
+#sumday .lab-evidence.compact .lab-facts strong { font-size: 17px; }
+#sumday .lab-result .result-score > span { color: var(--lab-ink) !important; }
+@media (max-width: 1050px) {
+  #sumday .mode-tab > span { display: none; }
+  #sumday .mode-tab { padding: 12px; font-size: 11px; flex-basis: 110px; }
+  #sumday .lab-intro-art { padding: 20px 15px; }
+  #sumday .art-caption strong { font-size: 15px; }
+  #sumday .art-caption > span { font-size: 9px; }
+  #sumday .chip-stack { display: none; }
+  #sumday .lab-format { gap: 8px; padding: 13px 10px; }
+  #sumday .lab-format small { font-size: 8px; }
+  #sumday .market-bars { gap: 3px; margin-right: 6px; }
+  #sumday .market-bars i { width: 7px; }
+}
+@media (max-width: 540px) {
+  #sumday .mode-tabs { gap: 5px; }
+  #sumday .mode-tab { flex: 1 1 30%; font-size: 10px; padding: 11px 5px; }
+  #sumday .lab-hub h2 { max-width: none; }
+  #sumday .lab-intro-art { min-height: 115px; padding: 19px 12px; gap: 8px; }
+  #sumday .mini-card { width: 35px; height: 54px; font-size: 16px; padding: 5px 6px; }
+  #sumday .mini-card > span { font-size: 22px; }
+  #sumday .mini-card.tilted-right { margin-left: -17px; margin-right: 6px; }
+  #sumday .art-caption { gap: 7px; }
+  #sumday .art-caption strong { font-size: 13px; max-width: 160px; line-height: 1.5; }
+  #sumday .art-caption > span { max-width: 145px; line-height: 1.7; font-size: 9px; }
+  #sumday .market-bars { transform: scale(.8) rotate(-5deg); transform-origin: left center; margin-right: -4px; }
+  #sumday .market-bars i { width: 5px; }
+  #sumday .lab-hub .soft-tag { font-size: 7px; letter-spacing: .4px; }
+  #sumday .lab-game-option { padding: 13px 11px; gap: 6px; }
+  #sumday .lab-game-option > strong { font-size: 12px; line-height: 1.5; }
+  #sumday .lab-game-option > span:last-child { font-size: 9px; }
+  #sumday .lab-format-grid { gap: 7px; }
+  #sumday .lab-format { padding: 12px 9px; gap: 7px; }
+  #sumday .lab-format .radio-dot { display: none; }
+  #sumday .lab-format > svg { width: 15px; }
+  #sumday .lab-format strong { font-size: 11px; }
+  #sumday .lab-format small { font-size: 8px; line-height: 1.5; }
+  #sumday .lab-brief p { font-size: 10px; }
+  #sumday .lab-hub .field-heading h3 { font-size: 10px; }
+  #sumday .mix-button { padding: 5px 7px; font-size: 9px; }
+  #sumday .practice-card .lab-question-heading h2 { font-size: 20px; }
+  #sumday .lab-facts { padding: 15px 5px; gap: 3px; }
+  #sumday .lab-facts strong { font-size: 19px; letter-spacing: -.8px; }
+  #sumday .lab-facts > div > span { font-size: 7px; letter-spacing: .3px; }
+  #sumday .lab-rules { font-size: 9px; }
+  #sumday .lab-choices .quiz-choice { font-size: 11px; }
+  #sumday .poker-table { gap: 12px; padding: 18px 8px; }
+  #sumday .card-group > div { gap: 4px; }
+  #sumday .playing-card { width: 32px; height: 48px; padding: 5px; }
+  #sumday .playing-card b { font-size: 13px; }
+  #sumday .playing-card > span { font-size: 20px; }
+  #sumday .card-group > span { font-size: 7px; }
+  #sumday .interval-panel { padding: 17px 12px 12px; }
+  #sumday .interval-panel > div:first-child > span { font-size: 7px; }
+  #sumday .interval-panel strong { font-size: 10px; }
+  #sumday .basket-table th, #sumday .basket-table td { font-size: 10px; padding: 11px 7px; }
+  #sumday .basket-table caption { font-size: 8px; padding: 12px; }
+  #sumday .lab-takeaway, #sumday .lab-simulation { font-size: 10px; }
+  #sumday .lab-round .game-label { font-size: 8px; }
+  #sumday .lab-keyboard-note { font-size: 8px; }
+}

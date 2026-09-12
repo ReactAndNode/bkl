@@ -61,6 +61,15 @@ The **Math** navigation link opens `/math/`, a self-contained practice page with
 - **Everyday stats:** Twelve lessons across a four-week study path, with examples, three-question quizzes, explanations, daily exercises, mastery, and XP.
 - **Quick tip:** One-minute games at 15%, 18%, 20%, 22%, and 25%, with three levels of bill difficulty. Tip amounts round to the nearest cent.
 
-Scores, streaks, and study progress stay in the visitor's browser. Completed rounds count toward a three-session daily goal. Math and tip questions are generated randomly; statistics quizzes use fixed questions with shuffled answers. Progress on a local origin does not transfer automatically to bowenkliu.com.
+- **Poker Lab:** Call or Fold, Count Your Outs, Find the Edge, and Skill or Luck. Use virtual all-in scenarios, visible Hold’em cards, and supplied probabilities to practice reasoning.
+- **Stock Lab:** Return Rollercoaster, Build a Balanced Basket, Find the Edge, and Skill or Luck. All returns and probabilities are fictional; no live prices or trades are involved.
 
-The implementation is under `app/math/`. Tests in `test/math-*.test.ts*` cover scoring, timer expiry, keyboard input, tip rounding, mastery, and restored progress; `test/export.test.mjs` checks the exported route. Run `yarn typecheck` for TypeScript checks alongside the existing lint, build, and test commands. The integrated site continues using port 7999; the standalone Sumday project remains on port 3006.
+Both labs offer **Learn** (five untimed decisions with hints and explanations) and **Sprint** (60 seconds, immediate advancement, and a full explanation review afterward). Mixed learning rounds include all four games in the selected lab. A correct decision earns one point; simulated wins or losses do not affect points. Only finished rounds are saved, and lab personal bests compare completed sprints. Existing arithmetic, tipping, and statistics progress is retained.
+
+Poker scenarios state their assumptions explicitly. Outs questions ask about completing the specified draw on the **next card**, not necessarily winning the hand. The uncertainty game uses a 95% Wilson binomial interval for independent trials of a pre-chosen model; it does not label a favorable sample as proof of skill. The basket game compares historical variation for portfolios reset to equal weights before each fictional month.
+
+Learning references: [pot odds](https://www.pokerstars.com/poker/learn/lesson/pot-odds/), [counting outs](https://www.pokerstars.com/poker/learn/lesson/calculating-outs/), [Wilson confidence intervals](https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm), and [diversification](https://www.investor.gov/introduction-investing/getting-started/asset-allocation).
+
+Scores, streaks, and study progress stay in the visitor's browser. Completed rounds count toward a three-session daily goal. Math, tip, and lab questions are generated randomly; statistics quizzes use fixed questions with shuffled answers. Progress on a local origin does not transfer automatically to bowenkliu.com.
+
+The implementation is under `app/math/`. Tests in `test/math-*.test.ts*` cover scoring, timer expiry, keyboard input, tip rounding, poker draws, expected values, confidence intervals, compound returns, mastery, and restored progress; `test/export.test.mjs` checks the exported route. Run `yarn typecheck` for TypeScript checks alongside the existing lint, build, and test commands. The integrated site continues using port 7999; the standalone Sumday project remains on port 3006.

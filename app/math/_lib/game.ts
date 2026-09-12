@@ -1,5 +1,9 @@
-export type Mode = "math" | "stats" | "tips";
-export type TimedMode = Exclude<Mode, "stats">;
+export type Mode = "math" | "stats" | "tips" | "poker" | "stocks";
+export type TimedMode = "math" | "tips";
+export type LabMode = "poker" | "stocks";
+export type LabGame = "call-fold" | "outs" | "edge" | "returns" | "noise" | "basket";
+export type LabSelection = LabGame | "mixed";
+export type LabFormat = "learn" | "sprint";
 export type Operation = "add" | "subtract" | "multiply" | "divide";
 export type Level = 1 | 2 | 3;
 export const ROUND_SECONDS = 60;
@@ -30,6 +34,8 @@ export interface Session {
   total: number;
   level?: Level;
   lessonId?: string;
+  labGame?: LabSelection;
+  format?: LabFormat;
 }
 export const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 export function shuffle<T>(items: readonly T[]): T[] {
@@ -118,7 +124,9 @@ export function readSessions(raw: string | null): Session[] {
     return parsed.filter((item): item is Session => {
       if (!item || typeof item !== "object") return false;
       const s = item as Session;
-      const valid = typeof s.id === "string" && !seen.has(s.id) && ["math","tips","stats"].includes(s.mode) && typeof s.date === "string" && Number.isFinite(Date.parse(s.date)) && Number.isInteger(s.correct) && Number.isInteger(s.total) && s.correct >= 0 && s.total >= s.correct && (s.mode === "stats" ? typeof s.lessonId === "string" && s.total === 3 : [1,2,3].includes(s.level ?? 0));
+      const lab = s.mode === "poker" || s.mode === "stocks";
+      const labGames = s.mode === "poker" ? ["mixed", "call-fold", "outs", "edge", "noise"] : ["mixed", "returns", "basket", "edge", "noise"];
+      const valid = typeof s.id === "string" && !seen.has(s.id) && ["math","tips","stats","poker","stocks"].includes(s.mode) && typeof s.date === "string" && Number.isFinite(Date.parse(s.date)) && Number.isInteger(s.correct) && Number.isInteger(s.total) && s.correct >= 0 && s.total >= s.correct && (lab ? labGames.includes(s.labGame ?? "") && (s.format === "sprint" || s.format === "learn" && s.total === 5) : s.mode === "stats" ? typeof s.lessonId === "string" && s.total === 3 : [1,2,3].includes(s.level ?? 0));
       if (valid) seen.add(s.id);
       return valid;
     });

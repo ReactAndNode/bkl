@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { ArrowUpRight, BookOpen, Brain, Calculator, ChartNoAxesCombined, Check, ChevronRight, Flame, MoveRight, Sparkles, Target, Timer, Trophy, Utensils, Zap } from "lucide-react";
+import { ArrowUpRight, BookOpen, Brain, Calculator, ChartNoAxesCombined, Check, ChevronRight, Flame, MoveRight, Sparkles, Spade, Target, Timer, TrendingUp, Trophy, Utensils, Zap } from "lucide-react";
 import { localDay, OPERATIONS, practiceStreak, TIP_PERCENTAGES, type Level, type Mode, type Operation, type Session, type TimedMode } from "../_lib/game";
 import { useProgress } from "../_lib/progress";
 import { CHAPTERS, LESSONS, type Lesson } from "../_lib/lessons";
 import TimedRound from "./timed-round";
 import StudyLesson from "./study-lesson";
+import LabHub from "./lab-hub";
+import { LAB_GAMES } from "../_lib/labs";
 
-const TABS = [{ id: "math", label: "Mental math", Icon: Calculator }, { id: "stats", label: "Everyday stats", Icon: ChartNoAxesCombined }, { id: "tips", label: "Quick tip", Icon: Utensils }] as const;
+const TABS = [{ id: "math", label: "Mental math", Icon: Calculator }, { id: "stats", label: "Everyday stats", Icon: ChartNoAxesCombined }, { id: "tips", label: "Quick tip", Icon: Utensils }, { id: "poker", label: "Poker Lab", Icon: Spade }, { id: "stocks", label: "Stock Lab", Icon: TrendingUp }] as const;
 const TIP_HINTS = [{percent:15, text:"10% + half of 10%"},{percent:18,text:"20% − 2%"},{percent:20,text:"10% × 2"},{percent:22,text:"20% + 2%"},{percent:25,text:"The bill ÷ 4"}];
 
 export default function Sumday() {
@@ -31,14 +33,16 @@ export default function Sumday() {
   const modeSessions = sessions.filter(session => session.mode === mode);
   const answered = modeSessions.reduce((sum, session) => sum + session.total, 0);
   const correct = modeSessions.reduce((sum, session) => sum + session.correct, 0);
-  const best = modeSessions.length ? Math.max(...modeSessions.map(session => session.correct)) : null;
+  const isLab = mode === "poker" || mode === "stocks";
+  const bestSessions = isLab ? modeSessions.filter(session => session.format === "sprint") : modeSessions;
+  const best = bestSessions.length ? Math.max(...bestSessions.map(session => session.correct)) : null;
   const lessonScores = Object.fromEntries(LESSONS.map(item => [item.id, Math.max(0, ...sessions.filter(session => session.lessonId === item.id).map(session => session.correct))]));
   const mastered = LESSONS.filter(item => lessonScores[item.id] === 3).length;
   const nextLesson = LESSONS.find(item => lessonScores[item.id] < 3) ?? LESSONS[0];
   const statsXP = Object.values(lessonScores).reduce((sum, score) => sum + score * 10, 0);
 
   function changeMode(next: Mode) { if (roundActive) return; setMode(next); setRun(null); setLesson(null); setSelectionMessage(""); }
-  function startRound() { if (mode === "stats") return; setRun({ id: crypto.randomUUID(), mode }); setRoundActive(true); }
+  function startRound() { if (mode !== "math" && mode !== "tips") return; setRun({ id: crypto.randomUUID(), mode }); setRoundActive(true); }
   function toggleOperation(id: Operation) {
     if (operations.includes(id) && operations.length === 1) { setSelectionMessage("Keep at least one operation in your workout."); return; }
     setOperations(current => current.includes(id) ? current.filter(item => item !== id) : [...current, id]); setSelectionMessage("");
@@ -56,13 +60,14 @@ export default function Sumday() {
       <div className="mode-tabs" role="tablist" aria-label="Practice mode">
         {TABS.map(({id,label,Icon},i) => <button key={id} id={`tab-${id}`} role="tab" aria-selected={mode===id} aria-controls="practice" tabIndex={mode===id?0:-1} disabled={roundActive && mode !== id} onClick={()=>changeMode(id)} onKeyDown={event=>{
           if (roundActive) return;
-          const target = event.key === "ArrowRight" ? (i+1)%3 : event.key === "ArrowLeft" ? (i+2)%3 : event.key === "Home" ? 0 : event.key === "End" ? 2 : -1;
+          const target = event.key === "ArrowRight" ? (i+1)%TABS.length : event.key === "ArrowLeft" ? (i+TABS.length-1)%TABS.length : event.key === "Home" ? 0 : event.key === "End" ? TABS.length-1 : -1;
           if(target>=0){event.preventDefault();changeMode(TABS[target].id);document.getElementById(`tab-${TABS[target].id}`)?.focus();}
         }} className={`mode-tab ${mode===id?"active":""}`}><Icon size={18}/>{label}<span>0{i+1}</span></button>)}
       </div>
       <div className="workspace"><div id="practice" role="tabpanel" aria-labelledby={`tab-${mode}`} tabIndex={-1}>
         {run ? <TimedRound key={run.id} id={run.id} mode={run.mode} level={run.mode==="math"?mathLevel:tipLevel} operations={operations} percentages={percentages} personalBest={best} onComplete={completeRound} onReplay={startRound} onBack={()=>setRun(null)}/> :
         lesson ? <StudyLesson key={lesson.id} lesson={lesson} previousBest={lessonScores[lesson.id]} onComplete={recordSession} onBack={()=>setLesson(null)} onNext={()=>setLesson(LESSONS[(LESSONS.findIndex(item=>item.id===lesson.id)+1)%LESSONS.length])}/> :
+        mode === "poker" || mode === "stocks" ? <LabHub key={mode} mode={mode} sessions={sessions} ready={ready} onComplete={recordSession} onActivity={setRoundActive}/> :
         mode === "stats" ? <section className="practice-card study-card">
           <div className="card-heading"><span className="icon-badge lavender"><BookOpen size={22}/></span><span className="soft-tag"><BookOpen size={13}/> YOUR 4-WEEK STUDY PATH</span></div><h2>Better questions. Smarter decisions.</h2><p className="card-description">A little theory. A real-life example. Three chances to make it click.</p>
           <div className="study-overview"><span><strong>{mastered}<small> / 12</small></strong> lessons mastered</span><span className="study-xp"><Sparkles size={15}/>{statsXP} XP</span></div><div className="study-progress" role="progressbar" aria-label="Lessons mastered" aria-valuenow={mastered} aria-valuemin={0} aria-valuemax={12}><span style={{width:`${mastered/12*100}%`}}/></div>
@@ -79,11 +84,11 @@ export default function Sumday() {
         </section>}
       </div><aside className="side-column">
         <section className="daily-card"><div className="section-kicker"><span>TODAY’S LITTLE GOAL</span><span className="tiny-icon"><Sparkles size={17}/></span></div><h3>{todayCount>=3?"Look at you showing up.":"Three small wins for you."}</h3><p>{todayCount>=3?"Daily goal complete. Your brain says thanks.":"A small habit. A surprisingly big difference."}</p><div className="goal-steps" aria-label={`${Math.min(todayCount,3)} of 3 daily sessions complete`}>{[1,2,3].map(n=><span key={n} className={todayCount>=n?"done":""}/>)}</div><div className="goal-caption"><span>{Math.min(todayCount,3)} of 3 sessions</span><span>{todayCount>=3?"Nicely done":"You’ve got this"}<ArrowUpRight size={13}/></span></div></section>
-        <section className="numbers-card"><div className="section-kicker">{mode==="stats"?"YOUR LEARNING":"YOUR NUMBERS"}<span className="numbers-mode">{mode==="math"?"MATH":mode==="tips"?"TIPS":"STATS"}</span></div><div className="stat-row"><span><Trophy size={17}/>{mode==="stats"?"Lessons mastered":"Personal best"}</span><strong>{mode==="stats"?mastered:best??"—"}<small>{mode==="stats"?"/ 12":"pts"}</small></strong></div><div className="stat-row"><span><Target size={17}/> Accuracy</span><strong>{answered?Math.round(correct/answered*100):"—"}<small>%</small></strong></div><div className="stat-row"><span><Timer size={17}/> Sessions played</span><strong>{modeSessions.length}</strong></div><div className="empty-stats">{modeSessions.length?<><span>{mode==="stats"?`${statsXP} XP earned from your best lesson scores.`:"Your completed rounds, across all levels."}</span><br/>A little more confident, one session at a time.</>:<><span>Every expert starts at zero.</span><br/>Your first session is a great place to begin.</>}</div></section>
+        <section className="numbers-card"><div className="section-kicker">{mode==="stats"?"YOUR LEARNING":"YOUR NUMBERS"}<span className="numbers-mode">{mode.toUpperCase()}</span></div><div className="stat-row"><span><Trophy size={17}/>{mode==="stats"?"Lessons mastered":isLab?"Best sprint":"Personal best"}</span><strong>{mode==="stats"?mastered:best??"—"}<small>{mode==="stats"?"/ 12":"pts"}</small></strong></div><div className="stat-row"><span><Target size={17}/> Accuracy</span><strong>{answered?Math.round(correct/answered*100):"—"}<small>%</small></strong></div><div className="stat-row"><span><Timer size={17}/> Sessions played</span><strong>{modeSessions.length}</strong></div><div className="empty-stats">{modeSessions.length?<><span>{mode==="stats"?`${statsXP} XP earned from your best lesson scores.`:isLab?"Best score tracks completed sprints.":"Your completed rounds, across all levels."}</span><br/>A little more confident, one session at a time.</>:<><span>Every expert starts at zero.</span><br/>Your first session is a great place to begin.</>}</div></section>
         {mode==="tips"&&!roundActive&&<section className="cheat-card"><div className="section-kicker">A FEW MENTAL SHORTCUTS</div>{TIP_HINTS.map(hint=><div className="shortcut-row" key={hint.percent}><strong>{hint.percent}%</strong><span>{hint.text}</span></div>)}<p>Calculate first. Round to cents at the end.</p></section>}
         {mode==="stats"&&!lesson&&<section className="study-note"><BookOpen size={18}/><strong>A plan that fits your life.</strong><p>Try Monday, Wednesday, and Friday. Review any tricky lessons on the weekend. Every lesson is open to explore.</p></section>}
-        <section className="note-card"><Brain size={19}/><div><strong>{roundActive?"One question at a time.":"Consistency > intensity."}</strong><p>{roundActive?<>Use keys 1–4 or tap an answer.<br/>Your next question is a fresh start.</>:<>A minute today beats an hour “someday.”<br/>Keep showing up for your brain.</>}</p></div></section>
-        {modeSessions.length>0&&!roundActive&&<section className="recent-card"><div className="section-kicker">RECENT SESSIONS</div>{modeSessions.slice(-3).reverse().map(item=><div key={item.id}><span>{new Date(item.date).toLocaleDateString(undefined,{month:"short",day:"numeric"})}<small>{item.mode==="stats"?LESSONS.find(l=>l.id===item.lessonId)?.title:`Level ${item.level}`}</small></span><strong>{item.correct}<small> / {item.total}</small></strong></div>)}</section>}
+        <section className="note-card"><Brain size={19}/><div><strong>{roundActive?"One question at a time.":isLab?"Good decisions can still lose.":"Consistency > intensity."}</strong><p>{roundActive?<>Use keys 1–4 or tap an answer.<br/>Your next question is a fresh start.</>:isLab?<>Practice probability, not prediction.<br/>Points reward your reasoning.</>:<>A minute today beats an hour “someday.”<br/>Keep showing up for your brain.</>}</p></div></section>
+        {modeSessions.length>0&&!roundActive&&<section className="recent-card"><div className="section-kicker">RECENT SESSIONS</div>{modeSessions.slice(-3).reverse().map(item=><div key={item.id}><span>{new Date(item.date).toLocaleDateString(undefined,{month:"short",day:"numeric"})}<small>{item.mode==="stats"?LESSONS.find(l=>l.id===item.lessonId)?.title:item.mode==="poker"||item.mode==="stocks"?`${item.labGame && item.labGame !== "mixed" ? LAB_GAMES[item.labGame].title : "Mixed practice"} · ${item.format === "sprint" ? "Sprint" : "Learn"}`:`Level ${item.level}`}</small></span><strong>{item.correct}<small> / {item.total}</small></strong></div>)}</section>}
       </aside></div>
       <div className="bottom-note"><span><span className="status-dot"/>Just you and the numbers.</span><span role={storageIssue?"status":undefined}>{storageIssue?"Browser storage is unavailable. Progress lasts until you close this page.":"No account needed. Progress stays in this browser."}</span></div>
     </main><footer><span>Made for a sharper everyday.</span><span>Small steps add up. <span className="footer-spark" aria-hidden="true">✳</span></span></footer>

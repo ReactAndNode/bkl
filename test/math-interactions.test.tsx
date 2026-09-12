@@ -5,6 +5,7 @@ import { act, StrictMode, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import Sumday from "../app/math/_components/sumday";
 import TimedRound from "../app/math/_components/timed-round";
+import LabRound from "../app/math/_components/lab-round";
 import { LESSONS } from "../app/math/_lib/lessons";
 import { type Session } from "../app/math/_lib/game";
 
@@ -110,4 +111,101 @@ test("games remain playable with in-memory progress when storage is blocked", as
   await act(async () => document.dispatchEvent(new dom.window.Event("visibilitychange")));
   assert.equal(container.querySelector(".numbers-card .stat-row strong")!.textContent, "1pts");
   assert.ok(container.textContent!.includes("Browser storage is unavailable"));
+});
+
+function callFoldChoice(correct = true) {
+  const facts = [...container.querySelectorAll(".lab-facts strong")].map(el => Number(el.textContent!.replace(/[$%]/g, "")));
+  const [pot, call, chance] = facts;
+  const ev = chance * (pot + call) - 100 * call;
+  const expected = ev > 0 ? "Call — positive EV" : ev < 0 ? "Fold — negative EV" : "Either — break-even";
+  return [...container.querySelectorAll(".lab-choices button")].find(el => (el.children[1].textContent === expected) === correct);
+}
+
+test("all five tabs are reachable with arrow keys, Home, and End", async () => {
+  await render(<Sumday/>);
+  assert.equal(container.querySelectorAll("[role='tab']").length, 5);
+  await act(async () => document.getElementById("tab-math")!.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "End", bubbles: true })));
+  assert.equal(document.getElementById("tab-stocks")!.getAttribute("aria-selected"), "true");
+  assert.equal(container.querySelectorAll(".lab-game-option").length, 4);
+  await act(async () => document.getElementById("tab-stocks")!.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true })));
+  assert.equal(document.getElementById("tab-math")!.getAttribute("aria-selected"), "true");
+  await act(async () => document.getElementById("tab-math")!.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true })));
+  assert.equal(document.getElementById("tab-stocks")!.getAttribute("aria-selected"), "true");
+  await act(async () => document.getElementById("tab-stocks")!.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "Home", bubbles: true })));
+  assert.equal(document.getElementById("tab-math")!.getAttribute("aria-selected"), "true");
+});
+
+test("lab learning explains all five decisions, keeps old progress, and ignores simulated luck", async context => {
+  localStorage.setItem("sumday-sessions-v1", JSON.stringify([{ id: "old-math", mode: "math", level: 1, date: new Date().toISOString(), correct: 4, total: 5 }]));
+  await render(<StrictMode><Sumday/></StrictMode>);
+  await click(button("Poker Lab")); await click(button("Call or Fold?")); await click(button("Let’s build some intuition"));
+  assert.equal(document.getElementById("tab-stocks")!.hasAttribute("disabled"), true);
+  await click(button("Show a little hint")); assert.ok(container.querySelector(".lab-hint"));
+  for (let i = 0; i < 5; i++) {
+    assert.equal(container.querySelector(".lab-step-label")!.textContent, `DECISION ${i + 1} OF 5`);
+    // Force an unlucky simulated call after the scenario and correct choice already exist.
+    const random = context.mock.method(Math, "random", () => .999);
+    await click(callFoldChoice(true)); random.mock.restore();
+    assert.equal(container.querySelector(".live-points strong")!.textContent, String(i + 1));
+    assert.ok(container.querySelector(".explanation-box.correct"));
+    assert.ok(container.querySelector(".lab-simulation")!.textContent!.includes("−$"));
+    assert.ok([...container.querySelectorAll(".lab-choices button")].every(el => el.hasAttribute("disabled")));
+    await click(button(i === 4 ? "See how you did" : "Next decision"));
+  }
+  const saved = JSON.parse(localStorage.getItem("sumday-sessions-v1")!);
+  assert.equal(saved.length, 2); assert.equal(saved[0].id, "old-math");
+  assert.equal(saved[1].mode, "poker"); assert.equal(saved[1].format, "learn"); assert.equal(saved[1].correct, 5); assert.equal(saved[1].total, 5);
+  assert.equal(container.querySelectorAll(".lab-review-item").length, 5);
+  assert.equal(document.getElementById("tab-stocks")!.hasAttribute("disabled"), false);
+  await click(button("Try five fresh decisions"));
+  assert.equal(container.querySelector(".live-points strong")!.textContent, "0");
+  await click(button("End round")); assert.equal(JSON.parse(localStorage.getItem("sumday-sessions-v1")!).length, 2);
+});
+
+test("a mixed Stock Lab learning round visits all four games and stores its result", async () => {
+  await render(<Sumday/>); await click(button("Stock Lab")); await click(button("Let’s build some intuition"));
+  const seen = new Set<string>();
+  for (let i = 0; i < 5; i++) {
+    seen.add(container.querySelector(".lab-question-heading .question-number")!.textContent!);
+    assert.equal(container.querySelectorAll(".lab-choices button").length, 4);
+    await click(container.querySelector(".lab-choices button"));
+    assert.ok(container.querySelector(".explanation-box"));
+    await click(button(i === 4 ? "See how you did" : "Next decision"));
+  }
+  assert.equal(seen.size, 4);
+  const saved = JSON.parse(localStorage.getItem("sumday-sessions-v1")!);
+  assert.equal(saved[0].mode, "stocks"); assert.equal(saved[0].labGame, "mixed"); assert.equal(saved[0].total, 5);
+  await act(async () => root.unmount()); root = createRoot(container); await render(<Sumday/>); await click(button("Stock Lab"));
+  assert.ok(container.querySelector(".lab-round-count")!.textContent!.includes("1 stock lab sessions"));
+});
+
+test("lab sprint advances immediately, counts correct choices only, and saves once on expiry", async () => {
+  const saved: (Session | null)[] = [];
+  await render(<LabRound id="lab-sprint" mode="poker" selection="call-fold" format="sprint" onComplete={s => saved.push(s)} onReplay={() => {}} onBack={() => {}}/>);
+  assert.equal(container.querySelector(".timer-display strong")!.textContent, "1:00");
+  await click(callFoldChoice(true)); assert.equal(container.querySelector(".live-points strong")!.textContent, "1");
+  await click(callFoldChoice(false)); assert.equal(container.querySelector(".live-points strong")!.textContent, "1");
+  now = 61000; await act(async () => document.dispatchEvent(new dom.window.Event("visibilitychange")));
+  assert.equal(saved.length, 1); assert.equal(saved[0]!.correct, 1); assert.equal(saved[0]!.total, 2); assert.equal(saved[0]!.format, "sprint");
+  assert.equal(container.querySelectorAll(".lab-review-item").length, 2);
+  await act(async () => window.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "1" })));
+  assert.equal(saved.length, 1);
+});
+
+test("lab sprint rejects answers at its deadline and early learning exits do not save", async () => {
+  const saved: (Session | null)[] = [];
+  await render(<LabRound id="late-lab" mode="poker" selection="call-fold" format="sprint" onComplete={s => saved.push(s)} onReplay={() => {}} onBack={() => {}}/>);
+  now = 60000; await click(callFoldChoice(true)); assert.equal(saved[0]!.total, 0);
+  await render(<LabRound key="early-lab" id="early-lab" mode="stocks" selection="returns" format="learn" onComplete={s => saved.push(s)} onReplay={() => {}} onBack={() => {}}/>);
+  await click(container.querySelector(".lab-choices button")); await click(button("End round"));
+  assert.equal(saved.length, 2); assert.equal(saved[1], null);
+});
+
+test("lab keyboard answers ignore held keys and duplicate events on the same question", async () => {
+  await render(<LabRound id="lab-keys" mode="poker" selection="call-fold" format="sprint" onComplete={() => {}} onReplay={() => {}} onBack={() => {}}/>);
+  const key = callFoldChoice(true)!.querySelector("kbd")!.textContent!;
+  await act(async () => window.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key, repeat: true })));
+  assert.equal(container.querySelector(".live-points strong")!.textContent, "0");
+  await act(async () => { window.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key })); window.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key })); });
+  assert.equal(container.querySelector(".live-points strong")!.textContent, "1");
 });
