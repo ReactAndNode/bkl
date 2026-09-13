@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { LAB_POOLS, expectedValue, makeLabQuestion, variance, wilsonInterval, type Card } from "../app/math/_lib/labs";
-import { callDecision, rangeTotals } from "../app/math/_lib/poker";
+import { LAB_POOLS, expectedValue, makeLabQuestion, withOpponentRead, variance, wilsonInterval, type Card } from "../app/math/_lib/labs";
+import { assessRiver, rangeTotals } from "../app/math/_lib/poker";
 import { readSessions, type LabMode } from "../app/math/_lib/game";
 
 test("every lab game generates four unique answers with one correct choice", () => {
@@ -22,11 +22,15 @@ test("river decisions derive equity from legal weighted hands instead of display
     assert.ok(q.river!.rows.some(row => row.possible > row.combos));
     assert.ok(q.facts.every(fact => !fact.label.includes("CHANCE")));
     const { pot, call } = q.metrics;
-    const totals = rangeTotals(q.river!.rows, q.river!.bluffFrequency);
-    assert.equal(q.choices[q.answer], callDecision(totals.equity, pot, call));
-    assert.ok(Math.abs(q.metrics.ev - (totals.winProbability * pot - totals.losses / totals.total * call + totals.tieProbability * (pot - call) / 2)) < 1e-8);
-    assert.equal(q.simulation!.probability, totals.winProbability);
-    assert.equal(q.simulation!.tieProbability, totals.tieProbability);
+    assert.equal(q.river!.assumption, "unknown");
+    assert.equal(q.simulation, undefined);
+    assert.equal(q.choices[q.answer], assessRiver(q.river!.rows, "unknown", pot, call).choice);
+    const chosen = withOpponentRead(q, "some");
+    const totals = rangeTotals(chosen.river!.rows, .5);
+    assert.equal(chosen.choices[chosen.answer], assessRiver(chosen.river!.rows, "some", pot, call).choice);
+    assert.ok(Math.abs(chosen.metrics.evLow - (totals.winProbability * pot - totals.losses / totals.total * call + totals.tieProbability * (pot - call) / 2)) < 1e-8);
+    assert.equal(chosen.simulation!.probability, totals.winProbability);
+    assert.equal(chosen.simulation!.tieProbability, totals.tieProbability);
   }
 });
 

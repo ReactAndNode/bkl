@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { analyzeRange, callDecision, cardKey, expandHand, handRank, makeRiverRead, parseCards, rangeTotals, RIVER_SPOTS } from "../app/math/_lib/poker";
-import { simulateOutcome, type LabQuestion } from "../app/math/_lib/labs";
+import { analyzeRange, assessRiver, callDecision, describeHand, cardKey, expandHand, handRank, makeRiverRead, parseCards, rangeTotals, RIVER_CHOICES, RIVER_SPOTS } from "../app/math/_lib/poker";
+import { simulateOutcome, makeLabQuestion, withOpponentRead, type LabQuestion } from "../app/math/_lib/labs";
 
 test("best-five evaluation orders every hand class and handles wheel, two trips, and three pairs", () => {
   const ordered = [
@@ -62,9 +62,12 @@ test("all scenario variants have unique cards and disjoint legal ranges; suit sh
     const { hand, board, read } = makeRiverRead();
     assert.equal(new Set([...hand, ...board].map(cardKey)).size, 7);
     assert.deepEqual(read.rows, analyzeRange(hand, board, read.value, read.bluffs));
-    const totals = rangeTotals(read.rows, read.bluffFrequency);
+    const totals = rangeTotals(read.rows, .5);
     assert.ok(totals.equity > 0 && totals.equity < 1);
     assert.ok(totals.losses > 0);
+    assert.equal(read.assumption, "unknown");
+    assert.notEqual(read.heroPosition, read.opponentPosition);
+    assert.ok(read.yourRange.includes(read.heroPosition === "Button" ? "button" : "big blind"));
   }
 });
 
@@ -72,4 +75,40 @@ test("a split-pot simulation returns half of the final pot minus the call", cont
   context.mock.method(Math, "random", () => .3);
   const question = { game: "call-fold", simulation: { probability: .2, tieProbability: .3, gain: 120, loss: 20 } } as LabQuestion;
   assert.match(simulateOutcome(question)!, /\+\$50\.00 \(split pot\)/);
+});
+
+
+test("an unknown read gives conditional answers while explicit reads can change the decision", () => {
+  const spot = RIVER_SPOTS[0];
+  const rows = analyzeRange(parseCards(spot.hands[0]), parseCards(spot.board), spot.value, spot.bluffs);
+  assert.equal(assessRiver(rows, "unknown", 120, 50).choice, RIVER_CHOICES[3]);
+  assert.equal(assessRiver(rows, "rare", 120, 50).choice, RIVER_CHOICES[1]);
+  assert.equal(assessRiver(rows, "some", 120, 50).choice, RIVER_CHOICES[0]);
+  assert.equal(assessRiver(rows, "often", 120, 50).choice, RIVER_CHOICES[0]);
+  assert.equal(assessRiver(rows, "some", 100, 50).choice, RIVER_CHOICES[2]);
+  const fewerBluffs = analyzeRange(parseCards(spot.hands[1]), parseCards(spot.board), spot.value, spot.bluffs);
+  assert.equal(assessRiver(fewerBluffs, "unknown", 120, 100).choice, RIVER_CHOICES[1]);
+  const thin = RIVER_SPOTS[2];
+  const thinRows = analyzeRange(parseCards(thin.hands[0]), parseCards(thin.board), thin.value, thin.bluffs);
+  assert.equal(assessRiver(thinRows, "unknown", 120, 20).choice, RIVER_CHOICES[0]);
+});
+
+test("changing an assumption preserves the cards, pot, choices, and original question", () => {
+  const original = makeLabQuestion("poker", "call-fold");
+  const changed = withOpponentRead(original, "rare");
+  assert.equal(original.river!.assumption, "unknown");
+  assert.equal(changed.river!.assumption, "rare");
+  assert.deepEqual(changed.cards, original.cards);
+  assert.deepEqual(changed.facts, original.facts);
+  assert.deepEqual(changed.choices, original.choices);
+  assert.ok(changed.explanation.includes("Rarely bluffs"));
+  assert.equal(withOpponentRead(changed, "unknown").simulation, undefined);
+});
+
+test("plain-language hand labels explain rank and suit notation", () => {
+  assert.equal(describeHand("QQ"), "Pair of queens");
+  assert.equal(describeHand("66"), "Pair of sixes");
+  assert.equal(describeHand("A6s"), "ace + six (same suit)");
+  assert.equal(describeHand("AK"), "ace + king (any suits)");
+  assert.equal(describeHand("A♥J♥"), "ace of hearts + jack of hearts");
 });

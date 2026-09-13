@@ -1,8 +1,8 @@
 import { randomInt, shuffle, type LabGame, type LabMode, type LabSelection } from "./game";
-import { callDecision, makeRiverRead, rangeTotals, type RiverRead } from "./poker";
+import { assessRiver, makeRiverRead, RIVER_CHOICES, type OpponentRead, type RiverRead } from "./poker";
 
 export const LAB_GAMES: Record<LabGame, { title: string; subtitle: string; lesson: string; source: string }> = {
-  "call-fold": { title: "Call or Fold?", subtitle: "Read the hand. Build a range. Make the call.", lesson: "Start with your cards and the board. Which hands in the working range beat you, tie you, or lose? Remove combinations blocked by visible cards, weight the remaining bluffs using the stated read, then compare your share of the pot with call ÷ (pot + call). A different range can change the decision.", source: "https://www.pokerstars.com/poker/learn/strategies/how-to-think-about-hand-ranges-in-poker/" },
+  "call-fold": { title: "Call or Fold?", subtitle: "Read the hand. Build a range. Make the call.", lesson: "Your two cards are known. The opponent’s range is your estimate of their possible hands. Compare your hand with those possibilities and choose a read on their bluffing. If different reasonable reads lead to different moves, ‘it depends’ can be the useful answer. Your own range is the wider set of hands you would play through this position and betting history.", source: "https://www.pokerstars.com/poker/learn/strategies/how-to-think-about-hand-ranges-in-poker/" },
   outs: { title: "Count Your Outs", subtitle: "See the cards that change the story", lesson: "Count the unseen cards that complete the requested draw. Divide by 47 unseen cards on the flop or 46 on the turn for the chance on the next card. Completing a draw does not guarantee winning.", source: "https://www.pokerstars.com/poker/learn/lesson/calculating-outs/" },
   edge: { title: "Find the Edge", subtitle: "An EV calculation warm-up", lesson: "Expected net value = win probability × net gain − loss probability × net loss. It describes a long-run average, not what must happen next. All probabilities here are supplied by a fictional model.", source: "https://www.pokerstars.com/poker/learn/lesson/pot-odds/" },
   returns: { title: "Return Rollercoaster", subtitle: "Ride the percentages, keep your balance", lesson: "Multiply successive growth factors instead of adding percentages. A 20% gain followed by a 20% loss leaves 96% of the starting value. Recovering from a loss uses the smaller, new balance as its baseline.", source: "https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" },
@@ -65,22 +65,41 @@ function callFold(): LabQuestion {
   const beforeBet = pick([40, 60, 80, 100, 120]);
   const call = beforeBet * pick([.25, .5, 1, 2]);
   const pot = beforeBet + call;
-  const totals = rangeTotals(read.rows, read.bluffFrequency);
-  const ev = totals.equity * (pot + call) - call;
+  const draft = question({
+    game: "call-fold", prompt: "They’re all-in. What would you do with your hand?",
+    facts: [{ label: "POT NOW · THEIR BET INCLUDED", value: cash(pot) }, { label: "YOU PAY TO CALL", value: cash(call) }, { label: "STREET", value: "River" }],
+    cards: { hand, board }, river: read, metrics: { pot, call },
+    rules: "Two players remain in a cash-game hand. No more cards, fees, or side pots. Your answer is checked against the opponent model you choose.",
+    explanation: "", takeaway: "",
+  }, RIVER_CHOICES[3], [...RIVER_CHOICES]);
+  return withOpponentRead(draft, "unknown");
+}
+
+export function withOpponentRead(q: LabQuestion, assumption: OpponentRead): LabQuestion {
+  if (!q.river) return q;
+  const { pot, call } = q.metrics;
+  const result = assessRiver(q.river.rows, assumption, pot, call);
   const threshold = call / (pot + call);
-  const count = (n: number) => String(Number(n.toFixed(2)));
-  const decision = callDecision(totals.equity, pot, call);
-  const choices = ["Call — positive EV", "Fold — negative EV", "Either — break-even", "Need their exact cards"];
-  return question({
-    game: "call-fold", prompt: "River shove. Does your hand have enough equity against this range to call?",
-    facts: [{ label: "POT NOW · BET INCLUDED", value: cash(pot) }, { label: "COST TO CALL", value: cash(call) }, { label: "STREET", value: "River" }],
-    cards: { hand, board }, river: read,
-    metrics: { pot, call, equity: totals.equity * 100, ev, threshold, bluffFrequency: read.bluffFrequency },
-    rules: "Heads-up cash-game drill. No more cards, no rake, no side pots. The range is a working hypothesis, not a known hand. Grade the decision using the stated model.",
-    explanation: `After blockers and bluff weights, you beat ${count(totals.wins)}, tie ${count(totals.ties)}, and lose to ${count(totals.losses)} weighted combinations. Your estimated equity is (wins + half of ties) ÷ ${count(totals.total)} = ${pct(totals.equity)}. The price to call is ${cash(call)} ÷ (${cash(pot)} + ${cash(call)}) = ${pct(threshold)}. ${decision}. Calling is worth ${signedCash(Math.abs(ev) < 1e-8 ? 0 : ev)} on average under this model.`,
-    takeaway: read.lesson + " The range and bluff frequency are assumptions; the betting line cannot tell you either with certainty.",
-    simulation: { probability: totals.winProbability, tieProbability: totals.tieProbability, gain: pot, loss: call },
-  }, decision, choices);
+  const uncertain = assumption === "unknown";
+  const opening = uncertain
+    ? result.choice === RIVER_CHOICES[3]
+      ? "Calling and folding can each make sense here: the better choice changes with how often this opponent bluffs."
+      : result.choice === RIVER_CHOICES[0]
+        ? "Your hand covers the price across all the bluff frequencies we tested for this listed opponent range."
+        : result.choice === RIVER_CHOICES[1]
+          ? "Even the most bluff-heavy version of this listed opponent range does not make calling profitable."
+          : "Calling and folding break even throughout this listed model."
+    : `Using your “${result.profile.label}” assumption: ${result.choice.toLowerCase()}.`;
+  const estimate = uncertain
+    ? `Your estimated share of the pot ranges from ${pct(result.low)} to ${pct(result.high)} as we vary the listed bluff candidates from never betting to always betting.`
+    : `Against that opponent model, your estimated share of the pot is ${pct(result.low)}, counting split pots as half a win. Calling has an average net result of ${signedCash(Math.abs(result.evLow) < 1e-8 ? 0 : result.evLow)}.`;
+  return {
+    ...q, river: { ...q.river, assumption }, answer: q.choices.indexOf(result.choice),
+    metrics: { pot, call, threshold, equityLow: result.low, equityHigh: result.high, evLow: result.evLow, evHigh: result.evHigh },
+    explanation: `${opening} ${estimate} You need ${pct(threshold)} to cover the call: ${cash(call)} ÷ (${cash(pot)} + ${cash(call)}).`,
+    takeaway: "This checks a decision with your actual hand under a suggested opponent range. Position, earlier actions, stacks, and player tendencies help you build ranges; they do not make another player’s cards certain.",
+    simulation: uncertain ? undefined : { probability: result.totals.winProbability, tieProbability: result.totals.tieProbability, gain: pot, loss: call },
+  };
 }
 
 function countOuts(): LabQuestion {

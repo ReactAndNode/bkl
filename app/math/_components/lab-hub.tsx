@@ -5,6 +5,7 @@ import { ArrowUpRight, BookOpen, Check, Dices, Layers, MoveRight, Shuffle, Spade
 import { LAB_GAMES, LAB_POOLS } from "../_lib/labs";
 import { type LabFormat, type LabMode, type LabSelection, type Session } from "../_lib/game";
 import LabRound from "./lab-round";
+import PokerBasics from "./poker-basics";
 
 interface Props { mode: LabMode; sessions: Session[]; ready: boolean; onComplete: (session: Session) => void; onActivity: (active: boolean) => void }
 export default function LabHub({ mode, sessions, ready, onComplete, onActivity }: Props) {
@@ -22,6 +23,7 @@ export default function LabHub({ mode, sessions, ready, onComplete, onActivity }
     <div className={`lab-intro-art ${poker ? "felt-art" : "market-art"}`} aria-hidden="true">
       {poker ? <><span className="mini-card tilted-left">A<span>♠</span></span><span className="mini-card tilted-right red-card">K<span>♥</span></span><div className="art-caption"><strong>Good decisions add up.</strong><span>Even when the cards don’t cooperate.</span></div><span className="chip-stack">+EV</span></> : <><span className="market-bars">{[20, 36, 27, 50, 39, 62, 55, 74].map((height, i) => <i key={i} style={{ height }} />)}</span><div className="art-caption"><strong>Look past the winning streak.</strong><span>Find the math behind the story.</span></div></>}
     </div>
+    {poker && <PokerBasics />}
     <div className="field-heading"><h3>Pick your playground</h3><button className={`mix-button ${selection === "mixed" ? "selected" : ""}`} aria-pressed={selection === "mixed"} onClick={() => setSelection("mixed")}><Shuffle size={12} /> Mix all four</button></div>
     <div className="lab-game-grid">{LAB_POOLS[mode].map((game, i) => <button key={game} className={`lab-game-option ${selection === game ? "selected" : ""}`} aria-pressed={selection === game} onClick={() => setSelection(game)}><span className="lab-game-top"><span>0{i + 1}</span>{selection === game ? <Check size={15} /> : <ArrowUpRight size={15} />}</span><strong>{LAB_GAMES[game].title}</strong><span>{LAB_GAMES[game].subtitle}</span></button>)}</div>
     <div className="field-heading level-heading"><h3>Understanding first. Speed when you’re ready.</h3></div>

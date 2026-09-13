@@ -66,7 +66,11 @@ The **Math** navigation link opens `/math/`, a self-contained practice page with
 
 Both labs offer **Learn** (five untimed decisions with hints and explanations) and **Sprint** (60 seconds, immediate advancement, and a full explanation review afterward). Mixed learning rounds include all four games in the selected lab. A correct decision earns one point; simulated wins or losses do not affect points. Only finished rounds are saved, and lab personal bests compare completed sprints. Existing arithmetic, tipping, and statistics progress is retained.
 
-Call or Fold derives river equity from legal opponent combinations after blockers and stated bluff weights. It shows no win percentage before answering. The explanation includes wins, ties, losses, and a bluff-frequency slider that changes the estimated equity and decision without changing your score. Four hand situations include suit and blocker variants; pot sizes and bluff assumptions are randomized. The supplied range is a learning hypothesis, not a claim that a betting line determines a real opponent’s cards.
+Call or Fold introduces your known hand, your own wider range, and the opponent’s estimated range separately. Each scenario shows both players’ positions and explains how the betting history relates to your own range. Opponent value bets and possible bluffs have plain-language definitions; the suggested hand lists and exact combination counts are expandable.
+
+Before answering, choose an opponent read: unknown, rarely bluffs, sometimes bluffs, or often bluffs. Unknown is the default and considers the full 0–100% frequency interval for the listed bluff candidates. A decision that changes across those assumptions is graded as “It depends on their bluffing.” Explicit reads use 25%, 50%, or 100% candidate bluff frequencies. Changing a read preserves the cards, pot, question count, and timer; it does not score an answer. Feedback records the chosen assumption. These are simplified learning models, not measured player tendencies or a complete strategy for your own range.
+
+River equity comes from legal opponent combinations after blockers and the selected bluff weights. It shows no win percentage before answering. The optional post-answer slider changes the explored equity and decision without changing your score. An unknown read has no single-outcome simulation. The four situations vary suits, card blockers, and pot sizes.
 
 All five tabs use a 12px minimum text size, with 16px main explanations and responsive layouts for larger text.
 

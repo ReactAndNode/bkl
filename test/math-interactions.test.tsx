@@ -6,7 +6,7 @@ import { createRoot, type Root } from "react-dom/client";
 import Sumday from "../app/math/_components/sumday";
 import TimedRound from "../app/math/_components/timed-round";
 import LabRound from "../app/math/_components/lab-round";
-import { analyzeRange, callDecision, parseCards, rangeTotals } from "../app/math/_lib/poker";
+import { analyzeRange, assessRiver, parseCards, type OpponentRead } from "../app/math/_lib/poker";
 import { LESSONS } from "../app/math/_lib/lessons";
 import { type Session } from "../app/math/_lib/game";
 
@@ -117,11 +117,10 @@ test("games remain playable with in-memory progress when storage is blocked", as
 function callFoldChoice(correct = true) {
   const [pot, call] = [...container.querySelectorAll(".lab-facts strong")].map(el => Number(el.textContent!.replace(/[$%]/g, "")));
   const groups = [...container.querySelectorAll(".poker-table .card-group > div")].map(el => parseCards(el.textContent!.replace(/10/g, "T")));
-  const value = container.querySelector(".range-value-hands")!.textContent!.split(", ");
-  const bluffs = container.querySelector(".range-bluff-hands")!.textContent!.split(", ");
-  const frequency = Number(container.querySelector(".range-frequency")!.textContent!.replace("%", "")) / 100;
-  const totals = rangeTotals(analyzeRange(groups[0], groups[1], value, bluffs), frequency);
-  const expected = callDecision(totals.equity, pot, call);
+  const value = [...container.querySelectorAll(".range-value-hands li")].map(el => el.getAttribute("data-hand-notation")!);
+  const bluffs = [...container.querySelectorAll(".range-bluff-hands li")].map(el => el.getAttribute("data-hand-notation")!);
+  const assumption = container.querySelector(".opponent-read-options [aria-pressed='true']")!.getAttribute("data-read") as OpponentRead;
+  const expected = assessRiver(analyzeRange(groups[0], groups[1], value, bluffs), assumption, pot, call).choice;
   return [...container.querySelectorAll(".lab-choices button")].find(el => (el.children[1].textContent === expected) === correct);
 }
 
@@ -150,6 +149,7 @@ test("lab learning explains all five decisions, keeps old progress, and ignores 
     assert.equal(container.querySelectorAll(".poker-table .playing-card").length, 7);
     assert.equal(container.querySelector(".range-review"), null);
     assert.ok(!container.textContent!.includes("CHANCE TO WIN"));
+    await click(button("Sometimes bluffs"));
     // Force an unlucky simulated call after the scenario and correct choice already exist.
     const random = context.mock.method(Math, "random", () => .999);
     await click(callFoldChoice(true)); random.mock.restore();
@@ -236,4 +236,42 @@ test("changing a range read after answering changes the estimate without changin
   await click(button("Next decision"));
   assert.equal(container.querySelector(".range-review"), null);
   assert.equal(container.querySelector(".lab-step-label")!.textContent, "DECISION 2 OF 5");
+});
+
+
+test("poker explains whose range it is and lets a read change without counting an answer", async () => {
+  await render(<Sumday/>); await click(button("Poker Lab"));
+  assert.ok(container.querySelector(".poker-basics")!.textContent!.includes("Your range"));
+  assert.ok(container.querySelector(".poker-basics")!.textContent!.includes("The opponent’s range"));
+  await click(button("Call or Fold?")); await click(button("Let’s build some intuition"));
+  assert.equal(container.querySelector("[data-read='unknown']")!.getAttribute("aria-pressed"), "true");
+  assert.equal(container.querySelectorAll(".poker-positions > div").length, 2);
+  assert.ok(container.querySelector(".opponent-range-label")!.textContent!.includes("Both groups below belong to the opponent"));
+  assert.ok(container.querySelector(".your-range-help")!.textContent!.includes("Your two cards stay fixed"));
+  const cards = container.querySelector(".poker-table")!.textContent;
+  const pot = container.querySelector(".lab-facts")!.textContent;
+  for (const read of ["Rarely bluffs", "Often bluffs", "I don’t know yet"]) {
+    await click(button(read));
+    assert.equal(container.querySelector(".live-points strong")!.textContent, "0");
+    assert.equal(container.querySelector(".lab-step-label")!.textContent, "DECISION 1 OF 5");
+    assert.equal(container.querySelector(".poker-table")!.textContent, cards);
+    assert.equal(container.querySelector(".lab-facts")!.textContent, pot);
+  }
+  await click(callFoldChoice(true));
+  assert.equal(container.querySelector(".live-points strong")!.textContent, "1");
+  assert.equal(container.querySelector(".opponent-read-options"), null);
+  assert.ok(container.querySelector(".chosen-opponent-read")!.textContent!.includes("I don’t know yet"));
+  assert.equal(container.querySelector(".lab-simulation"), null);
+  await click(button("Next decision"));
+  assert.equal(container.querySelector("[data-read='unknown']")!.getAttribute("aria-pressed"), "true");
+});
+
+test("changing an opponent read cannot reset or extend a sprint", async () => {
+  const saved: (Session | null)[] = [];
+  await render(<LabRound id="read-timer" mode="poker" selection="call-fold" format="sprint" onComplete={s => saved.push(s)} onReplay={() => {}} onBack={() => {}}/>);
+  now = 59000; await click(button("Rarely bluffs"));
+  now = 60000; await click(button("Often bluffs"));
+  assert.equal(saved.length, 1);
+  assert.equal(saved[0]!.total, 0);
+  assert.ok(container.querySelector(".lab-result"));
 });
