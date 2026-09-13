@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { LAB_POOLS, expectedValue, makeLabQuestion, variance, wilsonInterval, type Card } from "../app/math/_lib/labs";
+import { callDecision, rangeTotals } from "../app/math/_lib/poker";
 import { readSessions, type LabMode } from "../app/math/_lib/game";
 
 test("every lab game generates four unique answers with one correct choice", () => {
@@ -14,18 +15,19 @@ test("every lab game generates four unique answers with one correct choice", () 
   assert.throws(() => makeLabQuestion("poker", "basket"));
 });
 
-test("pot odds grade the incremental all-in decision, including break-even cases", () => {
-  const seen = new Set<string>();
-  for (let i = 0; i < 600; i++) {
+test("river decisions derive equity from legal weighted hands instead of displaying a win chance", () => {
+  for (let i = 0; i < 100; i++) {
     const q = makeLabQuestion("poker", "call-fold");
-    const { pot, call, equity } = q.metrics;
-    const net = equity * (pot + call) - 100 * call;
-    const expected = net > 0 ? "Call — positive EV" : net < 0 ? "Fold — negative EV" : "Either — break-even";
-    assert.equal(q.choices[q.answer], expected);
-    assert.equal(q.metrics.threshold, call / (pot + call));
-    seen.add(expected);
+    assert.equal(q.cards!.board.length, 5);
+    assert.ok(q.river!.rows.some(row => row.possible > row.combos));
+    assert.ok(q.facts.every(fact => !fact.label.includes("CHANCE")));
+    const { pot, call } = q.metrics;
+    const totals = rangeTotals(q.river!.rows, q.river!.bluffFrequency);
+    assert.equal(q.choices[q.answer], callDecision(totals.equity, pot, call));
+    assert.ok(Math.abs(q.metrics.ev - (totals.winProbability * pot - totals.losses / totals.total * call + totals.tieProbability * (pot - call) / 2)) < 1e-8);
+    assert.equal(q.simulation!.probability, totals.winProbability);
+    assert.equal(q.simulation!.tieProbability, totals.tieProbability);
   }
-  assert.equal(seen.size, 3);
 });
 
 function hasStraight(cards: Card[]) {

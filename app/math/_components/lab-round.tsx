@@ -5,6 +5,8 @@ import { ArrowLeft, Check, ChevronRight, Lightbulb, MoveRight, RotateCcw, Sparkl
 import { LAB_GAMES, LAB_POOLS, makeLabQuestion, signature, simulateOutcome, type Card, type LabQuestion } from "../_lib/labs";
 import { ROUND_SECONDS, secondsRemaining, shuffle, type LabFormat, type LabMode, type LabSelection, type Session } from "../_lib/game";
 
+import RangeReview from "./range-review";
+
 interface Attempt { question: LabQuestion; selected: number; correct: boolean; outcome: string | null }
 interface Result { attempts: Attempt[]; completed: boolean }
 interface Props { id: string; mode: LabMode; selection: LabSelection; format: LabFormat; onComplete: (session: Session | null) => void; onReplay: () => void; onBack: () => void }
@@ -43,7 +45,7 @@ export default function LabRound({ id, mode, selection, format, onComplete, onRe
     return () => { window.clearInterval(interval); document.removeEventListener("visibilitychange", tick); };
   }, [sprint, result, finish]);
   useEffect(() => { locked.current = false; }, [question]);
-  useEffect(() => { heading.current?.focus({ preventScroll: position > 0 }); }, [position, result]);
+  useEffect(() => { heading.current?.focus(); }, [position, result]);
   useEffect(() => { if (selected !== null) nextButton.current?.focus({ preventScroll: true }); }, [selected]);
 
   const answer = useCallback((choice: number) => {
@@ -80,7 +82,7 @@ export default function LabRound({ id, mode, selection, format, onComplete, onRe
     <p className="card-description">{result.completed ? "Your score rewards your reasoning. Luck doesn’t get a vote." : "This unfinished round wasn’t saved. Finish five learning decisions or the full sprint to record progress."}</p>
     <div className="result-score"><span>{score}</span><small>sound decisions</small></div>
     <div className="result-metrics"><div><strong>{result.attempts.length}</strong><span>decisions made</span></div><div><strong>{result.attempts.length ? Math.round(score / result.attempts.length * 100) : 0}<small>%</small></strong><span>accuracy</span></div><div><strong>{sprint ? "60s" : "Learn"}</strong><span>{result.completed ? "completed" : "unfinished"}</span></div></div>
-    {result.attempts.length > 0 && <details className="lab-review"><summary>Review all {result.attempts.length} decisions</summary>{result.attempts.map((attempt, i) => <article key={i} className="lab-review-item"><div className="lab-review-heading">{attempt.correct ? <Check size={15} /> : <X size={15} />}<strong>{i + 1}. {LAB_GAMES[attempt.question.game].title}</strong></div><p>{attempt.question.prompt}</p><QuestionEvidence question={attempt.question} compact /><p><b>Correct:</b> {attempt.question.choices[attempt.question.answer]}{!attempt.correct && <><br /><b>Your choice:</b> {attempt.question.choices[attempt.selected]}</>}</p><p>{attempt.question.explanation}</p><p className="lab-takeaway">{attempt.question.takeaway}</p>{attempt.outcome && <p className="lab-simulation">{attempt.outcome}</p>}</article>)}</details>}
+    {result.attempts.length > 0 && <details className="lab-review"><summary>Review all {result.attempts.length} decisions</summary>{result.attempts.map((attempt, i) => <article key={i} className="lab-review-item"><div className="lab-review-heading">{attempt.correct ? <Check size={15} /> : <X size={15} />}<strong>{i + 1}. {LAB_GAMES[attempt.question.game].title}</strong></div><p>{attempt.question.prompt}</p><QuestionEvidence question={attempt.question} compact /><p><b>Correct:</b> {attempt.question.choices[attempt.question.answer]}{!attempt.correct && <><br /><b>Your choice:</b> {attempt.question.choices[attempt.selected]}</>}</p><p>{attempt.question.explanation}</p><p className="lab-takeaway">{attempt.question.takeaway}</p>{attempt.question.river && <RangeReview read={attempt.question.river} pot={attempt.question.metrics.pot} call={attempt.question.metrics.call} />}{attempt.outcome && <p className="lab-simulation">{attempt.outcome}</p>}</article>)}</details>}
     <button className="primary-button" onClick={onReplay}><RotateCcw size={16} />{sprint ? "One more sprint" : "Try five fresh decisions"}<MoveRight size={18} /></button><button className="text-button result-back" onClick={onBack}><ArrowLeft size={14} /> Back to the lab</button>
   </section>;
 
@@ -93,7 +95,7 @@ export default function LabRound({ id, mode, selection, format, onComplete, onRe
     <p className="lab-rules">{question.rules}</p>
     {!sprint && selected === null && <><button className="text-button lab-hint-button" aria-expanded={hint} onClick={() => setHint(!hint)}><Lightbulb size={14} />{hint ? "Hide the hint" : "Show a little hint"}</button>{hint && <p className="lab-hint">{LAB_GAMES[question.game].lesson}</p>}</>}
     <div className="quiz-choices lab-choices">{question.choices.map((choice, i) => <button key={i} disabled={selected !== null} className={`quiz-choice ${selected !== null && i === question.answer ? "correct" : selected === i ? "incorrect" : ""}`} onClick={() => answer(i)}><kbd className="choice-letter">{i + 1}</kbd><span>{choice}</span>{selected !== null && i === question.answer ? <Check size={17} /> : selected === i ? <X size={17} /> : null}</button>)}</div>
-    {feedback && !sprint && <><div className={`explanation-box ${feedback.correct ? "correct" : "incorrect"}`} role="status"><strong>{feedback.correct ? "That’s sound reasoning. +1" : "Here’s the useful part."}</strong><p>{question.explanation}</p><p className="lab-takeaway">{question.takeaway}</p></div>{feedback.outcome && <div className="lab-simulation"><Sparkles size={14} /><p>{feedback.outcome}</p></div>}<button className="primary-button" ref={nextButton} onClick={next}>{position === 4 ? "See how you did" : "Next decision"}<ChevronRight size={18} /></button></>}
+    {feedback && !sprint && <><div className={`explanation-box ${feedback.correct ? "correct" : "incorrect"}`} role="status"><strong>{feedback.correct ? "That’s sound reasoning. +1" : "Here’s the useful part."}</strong><p>{question.explanation}</p><p className="lab-takeaway">{question.takeaway}</p></div>{question.river && <RangeReview key={position} read={question.river} pot={question.metrics.pot} call={question.metrics.call} />}{feedback.outcome && <div className="lab-simulation"><Sparkles size={14} /><p>{feedback.outcome}</p></div>}<button className="primary-button" ref={nextButton} onClick={next}>{position === 4 ? "See how you did" : "Next decision"}<ChevronRight size={18} /></button></>}
     {sprint && <div className={`answer-feedback ${feedback ? feedback.correct ? "correct" : "incorrect" : ""}`} role="status">{feedback ? <>{feedback.correct ? <Check size={14} /> : <MoveRight size={14} />}<span>{feedback.correct ? "Good decision! +1" : `Last answer: ${feedback.question.choices[feedback.question.answer]}`}</span></> : "Four choices. Trust your reasoning."}</div>}
     <p className="lab-keyboard-note">Tap a choice or press 1–4. {sprint ? "Explanations wait for your review." : "Take your time; this round is untimed."}</p>
     <span className="sr-only" role="status">{sprint && remaining === 10 ? "Ten seconds remaining." : ""}</span>
@@ -109,6 +111,14 @@ function QuestionEvidence({ question, compact = false }: { question: LabQuestion
   return <div className={compact ? "lab-evidence compact" : "lab-evidence"}>
     <div className="lab-facts">{question.facts.map(fact => <div key={fact.label}><span>{fact.label}</span><strong>{fact.value}</strong></div>)}</div>
     {question.cards && <div className="poker-table"><div className="card-group"><span>YOUR HAND</span><div>{question.cards.hand.map((card, i) => <PlayingCard card={card} key={i} />)}</div></div><div className="card-group"><span>THE BOARD</span><div>{question.cards.board.map((card, i) => <PlayingCard card={card} key={i} />)}</div></div></div>}
+    {question.river && <div className="river-read">
+      <h3>{question.river.title}</h3><p>{question.river.history}</p>
+      <h4>Your working range</h4>
+      <p><strong>Value bets:</strong> <span className="range-value-hands">{question.river.value.join(", ")}</span></p>
+      <p><strong>Possible bluffs:</strong> <span className="range-bluff-hands">{question.river.bluffs.join(", ")}</span></p>
+      <p className="range-assumption">For this exercise, start with equal weight for each legal combination. All listed value combinations shove; <strong className="range-frequency">{question.river.bluffFrequency * 100}%</strong> of each listed bluff candidate does. Estimate your equity from those hands.</p>
+      <p className="range-notation">T = ten · s = suited · no suffix = any suits · two specific suits = one exact combination. Your hand and the board block unavailable combinations.</p>
+    </div>}
     {question.interval && <div className="interval-panel"><div><span>95% WILSON INTERVAL</span><strong>{(question.interval.lower * 100).toFixed(1)}% – {(question.interval.upper * 100).toFixed(1)}%</strong></div><div className="confidence-track" role="img" aria-label={`Confidence interval ${(question.interval.lower * 100).toFixed(1)} to ${(question.interval.upper * 100).toFixed(1)} percent, compared with a 50 percent reference`}><i className="confidence-baseline" /><span className="confidence-range" style={{ left: `${question.interval.lower * 100}%`, width: `${(question.interval.upper - question.interval.lower) * 100}%` }} /><i className="confidence-estimate" style={{ left: `${question.interval.estimate * 100}%` }} /></div><div className="confidence-labels"><span>0%</span><span>50% reference</span><span>100%</span></div></div>}
     {question.series && <div className="basket-table-wrap"><table className="basket-table"><caption>Monthly returns (%) · Fictional investments</caption><thead><tr><th scope="col">Asset</th>{[1, 2, 3, 4].map(n => <th scope="col" key={n}>M{n}</th>)}</tr></thead><tbody>{question.series.map(series => <tr key={series.name}><th scope="row">{series.name}</th>{series.values.map((value, i) => <td key={i} className={value < 0 ? "negative-return" : "positive-return"}>{value > 0 ? "+" : ""}{value}%</td>)}</tr>)}</tbody></table></div>}
   </div>;

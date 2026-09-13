@@ -61,10 +61,14 @@ The **Math** navigation link opens `/math/`, a self-contained practice page with
 - **Everyday stats:** Twelve lessons across a four-week study path, with examples, three-question quizzes, explanations, daily exercises, mastery, and XP.
 - **Quick tip:** One-minute games at 15%, 18%, 20%, 22%, and 25%, with three levels of bill difficulty. Tip amounts round to the nearest cent.
 
-- **Poker Lab:** Call or Fold, Count Your Outs, Find the Edge, and Skill or Luck. Use virtual all-in scenarios, visible Hold’em cards, and supplied probabilities to practice reasoning.
+- **Poker Lab:** Call or Fold, Count Your Outs, Find the Edge, and Skill or Luck. Use river hands, betting histories, working opponent ranges, visible Hold’em cards, and an explicitly labeled EV warm-up to practice reasoning.
 - **Stock Lab:** Return Rollercoaster, Build a Balanced Basket, Find the Edge, and Skill or Luck. All returns and probabilities are fictional; no live prices or trades are involved.
 
 Both labs offer **Learn** (five untimed decisions with hints and explanations) and **Sprint** (60 seconds, immediate advancement, and a full explanation review afterward). Mixed learning rounds include all four games in the selected lab. A correct decision earns one point; simulated wins or losses do not affect points. Only finished rounds are saved, and lab personal bests compare completed sprints. Existing arithmetic, tipping, and statistics progress is retained.
+
+Call or Fold derives river equity from legal opponent combinations after blockers and stated bluff weights. It shows no win percentage before answering. The explanation includes wins, ties, losses, and a bluff-frequency slider that changes the estimated equity and decision without changing your score. Four hand situations include suit and blocker variants; pot sizes and bluff assumptions are randomized. The supplied range is a learning hypothesis, not a claim that a betting line determines a real opponent’s cards.
+
+All five tabs use a 12px minimum text size, with 16px main explanations and responsive layouts for larger text.
 
 Poker scenarios state their assumptions explicitly. Outs questions ask about completing the specified draw on the **next card**, not necessarily winning the hand. The uncertainty game uses a 95% Wilson binomial interval for independent trials of a pre-chosen model; it does not label a favorable sample as proof of skill. The basket game compares historical variation for portfolios reset to equal weights before each fictional month.
 

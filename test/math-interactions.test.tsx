@@ -6,6 +6,7 @@ import { createRoot, type Root } from "react-dom/client";
 import Sumday from "../app/math/_components/sumday";
 import TimedRound from "../app/math/_components/timed-round";
 import LabRound from "../app/math/_components/lab-round";
+import { analyzeRange, callDecision, parseCards, rangeTotals } from "../app/math/_lib/poker";
 import { LESSONS } from "../app/math/_lib/lessons";
 import { type Session } from "../app/math/_lib/game";
 
@@ -114,10 +115,13 @@ test("games remain playable with in-memory progress when storage is blocked", as
 });
 
 function callFoldChoice(correct = true) {
-  const facts = [...container.querySelectorAll(".lab-facts strong")].map(el => Number(el.textContent!.replace(/[$%]/g, "")));
-  const [pot, call, chance] = facts;
-  const ev = chance * (pot + call) - 100 * call;
-  const expected = ev > 0 ? "Call — positive EV" : ev < 0 ? "Fold — negative EV" : "Either — break-even";
+  const [pot, call] = [...container.querySelectorAll(".lab-facts strong")].map(el => Number(el.textContent!.replace(/[$%]/g, "")));
+  const groups = [...container.querySelectorAll(".poker-table .card-group > div")].map(el => parseCards(el.textContent!.replace(/10/g, "T")));
+  const value = container.querySelector(".range-value-hands")!.textContent!.split(", ");
+  const bluffs = container.querySelector(".range-bluff-hands")!.textContent!.split(", ");
+  const frequency = Number(container.querySelector(".range-frequency")!.textContent!.replace("%", "")) / 100;
+  const totals = rangeTotals(analyzeRange(groups[0], groups[1], value, bluffs), frequency);
+  const expected = callDecision(totals.equity, pot, call);
   return [...container.querySelectorAll(".lab-choices button")].find(el => (el.children[1].textContent === expected) === correct);
 }
 
@@ -143,11 +147,16 @@ test("lab learning explains all five decisions, keeps old progress, and ignores 
   await click(button("Show a little hint")); assert.ok(container.querySelector(".lab-hint"));
   for (let i = 0; i < 5; i++) {
     assert.equal(container.querySelector(".lab-step-label")!.textContent, `DECISION ${i + 1} OF 5`);
+    assert.equal(container.querySelectorAll(".poker-table .playing-card").length, 7);
+    assert.equal(container.querySelector(".range-review"), null);
+    assert.ok(!container.textContent!.includes("CHANCE TO WIN"));
     // Force an unlucky simulated call after the scenario and correct choice already exist.
     const random = context.mock.method(Math, "random", () => .999);
     await click(callFoldChoice(true)); random.mock.restore();
     assert.equal(container.querySelector(".live-points strong")!.textContent, String(i + 1));
     assert.ok(container.querySelector(".explanation-box.correct"));
+    assert.ok(container.querySelector(".range-review"));
+    assert.ok(container.querySelector(".range-explorer input[type='range']"));
     assert.ok(container.querySelector(".lab-simulation")!.textContent!.includes("−$"));
     assert.ok([...container.querySelectorAll(".lab-choices button")].every(el => el.hasAttribute("disabled")));
     await click(button(i === 4 ? "See how you did" : "Next decision"));
@@ -208,4 +217,23 @@ test("lab keyboard answers ignore held keys and duplicate events on the same que
   assert.equal(container.querySelector(".live-points strong")!.textContent, "0");
   await act(async () => { window.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key })); window.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key })); });
   assert.equal(container.querySelector(".live-points strong")!.textContent, "1");
+});
+
+
+test("changing a range read after answering changes the estimate without changing the score", async () => {
+  await render(<LabRound id="range-explore" mode="poker" selection="call-fold" format="learn" onComplete={() => {}} onReplay={() => {}} onBack={() => {}}/>);
+  await click(callFoldChoice(true));
+  const initial = container.querySelector(".range-explorer-result")!.textContent;
+  const input = container.querySelector<HTMLInputElement>(".range-explorer input")!;
+  await act(async () => {
+    Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value")!.set!.call(input, "0");
+    input.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+    input.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+  });
+  // The control is an exploration only; it must never append an answer or change points.
+  assert.equal(container.querySelector(".live-points strong")!.textContent, "1");
+  assert.notEqual(container.querySelector(".range-explorer-result")!.textContent, initial);
+  await click(button("Next decision"));
+  assert.equal(container.querySelector(".range-review"), null);
+  assert.equal(container.querySelector(".lab-step-label")!.textContent, "DECISION 2 OF 5");
 });

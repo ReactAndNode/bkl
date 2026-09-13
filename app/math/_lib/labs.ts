@@ -1,9 +1,10 @@
 import { randomInt, shuffle, type LabGame, type LabMode, type LabSelection } from "./game";
+import { callDecision, makeRiverRead, rangeTotals, type RiverRead } from "./poker";
 
 export const LAB_GAMES: Record<LabGame, { title: string; subtitle: string; lesson: string; source: string }> = {
-  "call-fold": { title: "Call or Fold?", subtitle: "Find the price of a good decision", lesson: "Compare your chance to win with call ÷ (pot + call). In these all-in examples, the pot already includes the opponent’s bet. There are no future bets, ties, or fees.", source: "https://www.pokerstars.com/poker/learn/lesson/pot-odds/" },
+  "call-fold": { title: "Call or Fold?", subtitle: "Read the hand. Build a range. Make the call.", lesson: "Start with your cards and the board. Which hands in the working range beat you, tie you, or lose? Remove combinations blocked by visible cards, weight the remaining bluffs using the stated read, then compare your share of the pot with call ÷ (pot + call). A different range can change the decision.", source: "https://www.pokerstars.com/poker/learn/strategies/how-to-think-about-hand-ranges-in-poker/" },
   outs: { title: "Count Your Outs", subtitle: "See the cards that change the story", lesson: "Count the unseen cards that complete the requested draw. Divide by 47 unseen cards on the flop or 46 on the turn for the chance on the next card. Completing a draw does not guarantee winning.", source: "https://www.pokerstars.com/poker/learn/lesson/calculating-outs/" },
-  edge: { title: "Find the Edge", subtitle: "A good bet can still lose", lesson: "Expected net value = win probability × net gain − loss probability × net loss. It describes a long-run average, not what must happen next. All probabilities here are supplied by a fictional model.", source: "https://www.pokerstars.com/poker/learn/lesson/pot-odds/" },
+  edge: { title: "Find the Edge", subtitle: "An EV calculation warm-up", lesson: "Expected net value = win probability × net gain − loss probability × net loss. It describes a long-run average, not what must happen next. All probabilities here are supplied by a fictional model.", source: "https://www.pokerstars.com/poker/learn/lesson/pot-odds/" },
   returns: { title: "Return Rollercoaster", subtitle: "Ride the percentages, keep your balance", lesson: "Multiply successive growth factors instead of adding percentages. A 20% gain followed by a 20% loss leaves 96% of the starting value. Recovering from a loss uses the smaller, new balance as its baseline.", source: "https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" },
   noise: { title: "Skill or Luck?", subtitle: "A winning streak is just the beginning", lesson: "Look at the uncertainty around a win rate. If the displayed 95% Wilson interval includes 50%, these data do not distinguish the win rate from that baseline at this level. More observations can narrow the interval; they cannot guarantee future results.", source: "https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm" },
   basket: { title: "Build a Balanced Basket", subtitle: "Find the pair that smooths the ride", lesson: "Compare how investments move together. For a portfolio reset to 50/50 each month, average the two returns in each column. Find the pair with the smallest swings in this sample. These are fictional returns, not a promise about future risk.", source: "https://www.investor.gov/introduction-investing/getting-started/asset-allocation" },
@@ -24,10 +25,11 @@ export interface LabQuestion {
   rules: string;
   metrics: Record<string, number>;
   variant?: string;
-  cards?: { hand: Card[]; board: Card[]; target: "flush" | "straight" };
+  cards?: { hand: Card[]; board: Card[]; target?: "flush" | "straight" };
+  river?: RiverRead;
   series?: { name: string; values: number[] }[];
   interval?: { lower: number; upper: number; estimate: number };
-  simulation?: { probability: number; gain: number; loss: number };
+  simulation?: { probability: number; gain: number; loss: number; tieProbability?: number };
 }
 type Draft = Omit<LabQuestion, "choices" | "answer">;
 const pick = <T,>(items: readonly T[]) => items[randomInt(0, items.length - 1)];
@@ -59,21 +61,26 @@ export function variance(values: number[]): number {
 export function signature(q: LabQuestion): string { return JSON.stringify([q.game, q.variant, q.metrics, q.cards, q.series]); }
 
 function callFold(): LabQuestion {
-  const pot = pick([40, 60, 80, 100, 120, 160]);
-  const call = pick([10, 20, 25, 40]);
-  const equity = pick([10, 15, 20, 25, 30, 40, 50, 60]);
-  const ev = (equity * pot - (100 - equity) * call) / 100;
+  const { hand, board, read } = makeRiverRead();
+  const beforeBet = pick([40, 60, 80, 100, 120]);
+  const call = beforeBet * pick([.25, .5, 1, 2]);
+  const pot = beforeBet + call;
+  const totals = rangeTotals(read.rows, read.bluffFrequency);
+  const ev = totals.equity * (pot + call) - call;
   const threshold = call / (pot + call);
-  const choices = ["Call — positive EV", "Fold — negative EV", "Either — break-even", "Need the original buy-in"];
+  const count = (n: number) => String(Number(n.toFixed(2)));
+  const decision = callDecision(totals.equity, pot, call);
+  const choices = ["Call — positive EV", "Fold — negative EV", "Either — break-even", "Need their exact cards"];
   return question({
-    game: "call-fold", prompt: "Your opponent is all-in. Call or fold?",
-    facts: [{ label: "POT NOW · BET INCLUDED", value: cash(pot) }, { label: "COST TO CALL", value: cash(call) }, { label: "CHANCE TO WIN", value: `${equity}%` }],
-    metrics: { pot, call, equity, ev, threshold },
-    rules: "Practice chips. Given win chance; no future betting, ties, or fees. Folding has zero additional cost.",
-    explanation: `Break-even chance = ${cash(call)} ÷ (${cash(pot)} + ${cash(call)}) = ${pct(threshold)}. Your ${equity}% chance is ${ev > 0 ? "above" : ev < 0 ? "below" : "exactly at"} that threshold. Calling has an expected net value of ${signedCash(ev)} relative to folding.`,
-    takeaway: "Judge the call using the price and probability available at the time.",
-    simulation: { probability: equity / 100, gain: pot, loss: call },
-  }, choices[ev > 0 ? 0 : ev < 0 ? 1 : 2], choices);
+    game: "call-fold", prompt: "River shove. Does your hand have enough equity against this range to call?",
+    facts: [{ label: "POT NOW · BET INCLUDED", value: cash(pot) }, { label: "COST TO CALL", value: cash(call) }, { label: "STREET", value: "River" }],
+    cards: { hand, board }, river: read,
+    metrics: { pot, call, equity: totals.equity * 100, ev, threshold, bluffFrequency: read.bluffFrequency },
+    rules: "Heads-up cash-game drill. No more cards, no rake, no side pots. The range is a working hypothesis, not a known hand. Grade the decision using the stated model.",
+    explanation: `After blockers and bluff weights, you beat ${count(totals.wins)}, tie ${count(totals.ties)}, and lose to ${count(totals.losses)} weighted combinations. Your estimated equity is (wins + half of ties) ÷ ${count(totals.total)} = ${pct(totals.equity)}. The price to call is ${cash(call)} ÷ (${cash(pot)} + ${cash(call)}) = ${pct(threshold)}. ${decision}. Calling is worth ${signedCash(Math.abs(ev) < 1e-8 ? 0 : ev)} on average under this model.`,
+    takeaway: read.lesson + " The range and bluff frequency are assumptions; the betting line cannot tell you either with certainty.",
+    simulation: { probability: totals.winProbability, tieProbability: totals.tieProbability, gain: pot, loss: call },
+  }, decision, choices);
 }
 
 function countOuts(): LabQuestion {
@@ -198,7 +205,9 @@ export function makeLabQuestion(mode: LabMode, selection: LabSelection, previous
 
 export function simulateOutcome(q: LabQuestion): string | null {
   if (!q.simulation) return null;
-  const { probability, gain, loss } = q.simulation;
-  const result = Math.random() < probability ? gain : -loss;
-  return `One simulated ${q.game === "call-fold" ? "call" : "trial"}: ${signedCash(result)}. Your score depends on the reasoning, not this outcome.`;
+  const { probability, gain, loss, tieProbability = 0 } = q.simulation;
+  const draw = Math.random();
+  const split = draw >= probability && draw < probability + tieProbability;
+  const result = draw < probability ? gain : split ? (gain - loss) / 2 : -loss;
+  return `One simulated ${q.game === "call-fold" ? "call" : "trial"}: ${signedCash(result)}${split ? " (split pot)" : ""}. Your score depends on the reasoning, not this outcome.`;
 }

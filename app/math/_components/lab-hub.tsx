@@ -18,7 +18,7 @@ export default function LabHub({ mode, sessions, ready, onComplete, onActivity }
   return <section className={`practice-card lab-hub ${poker ? "poker-theme" : "stocks-theme"}`}>
     <div className="card-heading"><span className="icon-badge">{poker ? <Spade size={22} /> : <TrendingUp size={22} />}</span><span className="soft-tag"><Dices size={13} /> A LITTLE RISK. A LOT TO LEARN.</span></div>
     <h2>{poker ? "Play the odds. Sharpen your instincts." : "A clearer head for a noisy market."}</h2>
-    <p className="card-description">{poker ? "Practice the thinking behind the hand. Virtual chips, real understanding." : "Play with fictional returns. Get comfortable with probability, growth, and uncertainty."}</p>
+    <p className="card-description">{poker ? "Read hands, build ranges, and test your assumptions. Virtual chips, real understanding." : "Play with fictional returns. Get comfortable with probability, growth, and uncertainty."}</p>
     <div className={`lab-intro-art ${poker ? "felt-art" : "market-art"}`} aria-hidden="true">
       {poker ? <><span className="mini-card tilted-left">A<span>♠</span></span><span className="mini-card tilted-right red-card">K<span>♥</span></span><div className="art-caption"><strong>Good decisions add up.</strong><span>Even when the cards don’t cooperate.</span></div><span className="chip-stack">+EV</span></> : <><span className="market-bars">{[20, 36, 27, 50, 39, 62, 55, 74].map((height, i) => <i key={i} style={{ height }} />)}</span><div className="art-caption"><strong>Look past the winning streak.</strong><span>Find the math behind the story.</span></div></>}
     </div>
